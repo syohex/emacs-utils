@@ -21,8 +21,13 @@
 
 (defgroup pomodoro nil
   "Pomodoro in Emacs"
-  :prefix "pomodoro-"
+  :prefix "pomodoro:"
   :group 'pomodoro)
+
+(defcustom pomodoro:file "~/.emacs.d/pomodoro.org"
+  "Pomodoro check file"
+  :group 'pomodoro
+  :type 'string)
 
 (defcustom pomodoro:work-time 25
   "Work minitus"
@@ -30,6 +35,11 @@
   :type 'integer)
 
 (defcustom pomodoro:rest-time 5
+  "Rest minutes"
+  :group 'pomodoro
+  :type 'integer)
+
+(defcustom pomodoro:long-rest-time 30
   "Rest minutes"
   :group 'pomodoro
   :type 'integer)
@@ -51,6 +61,8 @@
 
 (defvar pomodoro:timer nil)
 
+(defvar pomodoro:work-count 0)
+
 (defvar pomodoro:current-state 'working
   "Pomodoro statement flag, working or rest")
 
@@ -60,16 +72,27 @@
   `(setq pomodoro:current-state ,mode))
 
 (defun pomodoro:switch-mode ()
-  (if (eq pomodoro:current-state 'working)
-      (pomodoro:set-mode 'rest)
-    (pomodoro:set-mode 'working)))
+  (cond ((eq pomodoro:current-state 'working)
+         (run-hooks 'pomodoro:finish-work-hook)
+         (pomodoro:set-mode 'rest)
+         (find-file pomodoro:file))
+        (t
+         (pomodoro:set-mode 'working)
+         (run-hooks 'pomodoro:finish-rest-hook))))
 
 (defmacro pomodoro:reset-remainder-time (time)
   `(setq pomodoro:remainder-seconds (* ,time 60)))
 
 (defun pomodoro:reset-time ()
   (if (eq pomodoro:current-state 'working)
-      (pomodoro:reset-remainder-time pomodoro:rest-time)
+      (progn
+        (incf pomodoro:work-count)
+        (cond ((= pomodoro:work-count 4)
+               (run-hooks 'pomodoro:long-rest-hook)
+               (setq pomodoro:work-count 0)
+               (pomodoro:reset-remainder-time pomodoro:long-rest-time))
+              (t
+               (pomodoro:reset-remainder-time pomodoro:rest-time))))
     (pomodoro:reset-remainder-time pomodoro:work-time)))
 
 (defvar pomodoro:mode-line "")
@@ -79,6 +102,7 @@
 
 (defvar pomodoro:finish-work-hook nil)
 (defvar pomodoro:finish-rest-hook nil)
+(defvar pomodoro:long-rest-hook nil)
 
 (add-hook 'pomodoro:finish-work-hook
           (lambda ()
@@ -90,6 +114,12 @@
           (lambda ()
             (notifications-notify :title "Pomodoro"
                                   :body "Break time is finished"
+                                  :urgency 'critical)))
+
+(add-hook 'pomodoro:long-rest-hook
+          (lambda ()
+            (notifications-notify :title "Pomodoro"
+                                  :body "Long Break time is now"
                                   :urgency 'critical)))
 
 (defun pomodoro:time-to-string (seconds)
@@ -112,10 +142,10 @@
 (defun pomodoro:tick ()
   (let ((remainder-seconds (1- pomodoro:remainder-seconds)))
     (cond ((< remainder-seconds 0)
-           (pomodoro:switch-mode)
            (pomodoro:reset-time)
-           (run-hook 'pomodoro:finish-work-hook))
-          (t (decf pomodoro:remainder-seconds)))
+           (pomodoro:switch-mode))
+          (t
+           (decf pomodoro:remainder-seconds)))
     (pomodoro:set-mode-line)
     (force-mode-line-update)))
 
@@ -124,12 +154,16 @@
 
 (defun pomodoro:start (arg)
   (interactive "p")
+  (setq pomodoro:work-count 0)
+  (pomodoro:set-mode 'working)
   (pomodoro:set-remainder-second arg)
   (setq pomodoro:timer (run-with-timer 0 1 'pomodoro:tick)))
 
 (defun pomodoro:stop ()
   (interactive)
   (cancel-timer pomodoro:timer)
+  (setq pomodoro:work-count 0)
+  (setq pomodoro:timer nil)
   (setq pomodoro:mode-line "")
   (force-mode-line-update))
 
