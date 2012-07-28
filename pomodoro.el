@@ -66,7 +66,7 @@
 
 (defvar pomodoro:remainder-seconds 0)
 
-(defmacro pomodoro:set-mode (mode)
+(defmacro pomodoro:set-state (mode)
   `(setq pomodoro:current-state ,mode))
 
 (defmacro pomodoro:reset-remainder-time (time)
@@ -78,12 +78,13 @@
   (setq pomodoro:work-count 0))
 
 (defun pomodoro:switch-to-rest ()
+  (pomodoro:set-state 'rest)
   (find-file pomodoro:file)
   (incf pomodoro:work-count)
   (cond ((= pomodoro:work-count 4)
          (pomodoro:switch-to-long-rest))
         (t
-         (run-hooks 'pomodoro:finish-rest-hook)
+         (run-hooks 'pomodoro:finish-work-hook)
          (pomodoro:reset-remainder-time pomodoro:rest-time))))
 
 (defvar pomodoro:mode-line "")
@@ -113,15 +114,17 @@
         (pomodoro:time-to-string pomodoro:remainder-seconds)))
 
 (defun pomodoro:expire ()
-  (run-hooks 'pomodoro:finish-work-hook)
-  (pomodoro:stop))
+  (if (eq pomodoro:current-state 'working)
+      (pomodoro:switch-to-rest)
+    (pomodoro:stop)))
 
 (defun pomodoro:tick ()
   (let ((remainder-seconds (1- pomodoro:remainder-seconds)))
     (if (< remainder-seconds 0)
-        (pomodoro:expire))
-    (decf pomodoro:remainder-seconds)
+        (pomodoro:expire)
+      (decf pomodoro:remainder-seconds))
     (pomodoro:set-mode-line)
+    (pomodoro:propertize-mode-line)
     (force-mode-line-update)))
 
 (defun pomodoro:set-remainder-second (minutes)
@@ -134,7 +137,7 @@
 (defun pomodoro:start (arg)
   (interactive "P")
   (setq pomodoro:work-count 0)
-  (pomodoro:set-mode 'working)
+  (pomodoro:set-state 'working)
   (pomodoro:set-remainder-second (or arg pomodoro:work-time))
   (setq pomodoro:timer (run-with-timer 0 1 'pomodoro:tick)))
 
