@@ -113,9 +113,8 @@
         (pomodoro:time-to-string pomodoro:remainder-seconds)))
 
 (defun pomodoro:expire ()
-  (cond ((eq pomodoro:current-state 'working)
-         (run-hooks 'pomodoro:finish-work-hook))
-        (t (pomodoro:stop))))
+  (run-hooks 'pomodoro:finish-work-hook)
+  (pomodoro:stop))
 
 (defun pomodoro:tick ()
   (let ((remainder-seconds (1- pomodoro:remainder-seconds)))
