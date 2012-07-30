@@ -154,6 +154,8 @@
 
 (defun pomodoro:start (arg)
   (interactive "P")
+  (if pomodoro:timer
+    (error "Already start timer!!"))
   (when (not (pomodoro:last-work-today-p))
     (message "Reset Pomodoro Count")
     (setq pomodoro:work-count 0))
