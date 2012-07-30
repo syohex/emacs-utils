@@ -144,13 +144,13 @@
 (defun pomodoro:last-work-today-p ()
   (string= pomodoro:last-work-time (pomodoro:current-time-to-string)))
 
-(defun pomodoro:work-count ()
+(defun pomodoro:today-work-count ()
   (interactive)
   (message "Today's Pomodoro Count is %d !!" pomodoro:work-count))
 
 (defun pomodoro:start (arg)
   (interactive "P")
-  (when (pomodoro:last-work-today-p)
+  (when (not (pomodoro:last-work-today-p))
     (message "Reset Pomodoro Count")
     (setq pomodoro:work-count 0))
   (pomodoro:set-state 'working)
