@@ -73,15 +73,14 @@
   `(setq pomodoro:remainder-seconds (* ,time 60)))
 
 (defun pomodoro:switch-to-long-rest ()
-  (pomodoro:long-rest-hook)
-  (pomodoro:reset-remainder-time pomodoro:long-rest-time)
-  (setq pomodoro:work-count 0))
+  (run-hooks 'pomodoro:long-rest-hook)
+  (pomodoro:reset-remainder-time pomodoro:long-rest-time))
 
 (defun pomodoro:switch-to-rest ()
   (pomodoro:set-state 'rest)
   (find-file pomodoro:file)
   (incf pomodoro:work-count)
-  (cond ((= pomodoro:work-count 4)
+  (cond ((zerop (mod pomodoro:work-count 4))
          (pomodoro:switch-to-long-rest))
         (t
          (run-hooks 'pomodoro:finish-work-hook)
@@ -116,7 +115,9 @@
 (defun pomodoro:expire ()
   (if (eq pomodoro:current-state 'working)
       (pomodoro:switch-to-rest)
-    (pomodoro:stop)))
+    (progn
+      (run-hooks 'pomodoro:finish-rest-hook)
+      (run-with-timer 0 nil 'pomodoro:stop))))
 
 (defun pomodoro:tick ()
   (let ((remainder-seconds (1- pomodoro:remainder-seconds)))
@@ -134,9 +135,24 @@
   (setq pomodoro:mode-line "")
   (force-mode-line-update))
 
+(defun pomodoro:current-time-to-string ()
+  (format-time-string "%m:%d" (current-time)))
+
+(defvar pomodoro:last-work-time (pomodoro:current-time-to-string)
+  "Last time of pomodoro work(format 'Month:Day')")
+
+(defun pomodoro:last-work-today-p ()
+  (string= pomodoro:last-work-time (pomodoro:current-time-to-string)))
+
+(defun pomodoro:work-count ()
+  (interactive)
+  (message "Today's Pomodoro Count is %d !!" pomodoro:work-count))
+
 (defun pomodoro:start (arg)
   (interactive "P")
-  (setq pomodoro:work-count 0)
+  (when (pomodoro:last-work-today-p)
+    (message "Reset Pomodoro Count")
+    (setq pomodoro:work-count 0))
   (pomodoro:set-state 'working)
   (pomodoro:set-remainder-second (or arg pomodoro:work-time))
   (setq pomodoro:timer (run-with-timer 0 1 'pomodoro:tick)))
