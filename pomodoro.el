@@ -73,14 +73,16 @@
   `(setq pomodoro:remainder-seconds (* ,time 60)))
 
 (defun pomodoro:switch-to-long-rest ()
-  (run-hooks 'pomodoro:long-rest-hook)
   (pomodoro:reset-remainder-time pomodoro:long-rest-time))
+
+(defun pomodoro:long-rest-p ()
+  (zerop (mod pomodoro:work-count 4)))
 
 (defun pomodoro:switch-to-rest ()
   (pomodoro:set-state 'rest)
   (find-file pomodoro:file)
   (incf pomodoro:work-count)
-  (cond ((zerop (mod pomodoro:work-count 4))
+  (cond ((pomodoro:long-rest-p)
          (pomodoro:switch-to-long-rest))
         (t
          (run-hooks 'pomodoro:finish-work-hook)
@@ -116,7 +118,9 @@
   (if (eq pomodoro:current-state 'working)
       (pomodoro:switch-to-rest)
     (progn
-      (run-hooks 'pomodoro:finish-rest-hook)
+      (if (pomodoro:long-rest-p)
+          (run-hooks 'pomodoro:long-rest-hook)
+        (run-hooks 'pomodoro:finish-rest-hook))
       (run-with-timer 0 nil 'pomodoro:stop))))
 
 (defun pomodoro:tick ()
