@@ -42,6 +42,16 @@
   :group 'pomodoro
   :type 'integer)
 
+(defcustom pomodoro:mode-line-work-sign "●"
+  "String in mode line at work"
+  :group 'pomodoro
+  :type 'string)
+
+(defcustom pomodoro:mode-line-rest-sign "●"
+  "String in mode line at rest"
+  :group 'pomodoro
+  :type 'string)
+
 (defface pomodoro:work-face
   '((t (:foreground "red")))
   "mode-line-face"
@@ -90,9 +100,6 @@
 
 (defvar pomodoro:mode-line "")
 
-(defvar pomodoro:mode-line-sign "●"
-  "Show which is working or resting now")
-
 (defvar pomodoro:finish-work-hook nil)
 (defvar pomodoro:finish-rest-hook nil)
 (defvar pomodoro:long-rest-hook nil)
@@ -102,8 +109,8 @@
 
 (defun pomodoro:propertize-sign ()
   (if (eq pomodoro:current-state 'working)
-      (propertize pomodoro:mode-line-sign 'face 'pomodoro:work-face)
-    (propertize pomodoro:mode-line-sign 'face 'pomodoro:rest-face)))
+      (propertize pomodoro:mode-line-work-sign 'face 'pomodoro:work-face)
+    (propertize pomodoro:mode-line-rest-sign 'face 'pomodoro:rest-face)))
 
 (defun pomodoro:propertize-mode-line ()
   (unless (string= pomodoro:mode-line "")
