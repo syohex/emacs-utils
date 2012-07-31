@@ -76,6 +76,10 @@
 
 (defvar pomodoro:remainder-seconds 0)
 
+(defvar pomodoro:finish-work-hook nil)
+(defvar pomodoro:finish-rest-hook nil)
+(defvar pomodoro:long-rest-hook nil)
+
 (defmacro pomodoro:set-state (mode)
   `(setq pomodoro:current-state ,mode))
 
@@ -83,6 +87,7 @@
   `(setq pomodoro:remainder-seconds (* ,time 60)))
 
 (defun pomodoro:switch-to-long-rest ()
+  (run-hooks 'pomodoro:long-rest-hook)
   (pomodoro:reset-remainder-time pomodoro:long-rest-time))
 
 (defun pomodoro:long-rest-p ()
@@ -92,17 +97,13 @@
   (pomodoro:set-state 'rest)
   (find-file pomodoro:file)
   (incf pomodoro:work-count)
+  (run-hooks 'pomodoro:finish-work-hook)
   (cond ((pomodoro:long-rest-p)
          (pomodoro:switch-to-long-rest))
         (t
-         (run-hooks 'pomodoro:finish-work-hook)
          (pomodoro:reset-remainder-time pomodoro:rest-time))))
 
 (defvar pomodoro:mode-line "")
-
-(defvar pomodoro:finish-work-hook nil)
-(defvar pomodoro:finish-rest-hook nil)
-(defvar pomodoro:long-rest-hook nil)
 
 (defun pomodoro:time-to-string (seconds)
   (format "%02d:%02d" (/ seconds 60) (mod seconds 60)))
@@ -125,9 +126,7 @@
   (if (eq pomodoro:current-state 'working)
       (pomodoro:switch-to-rest)
     (progn
-      (if (pomodoro:long-rest-p)
-          (run-hooks 'pomodoro:long-rest-hook)
-        (run-hooks 'pomodoro:finish-rest-hook))
+      (run-hooks 'pomodoro:finish-rest-hook)
       (run-with-timer 0 nil 'pomodoro:stop))))
 
 (defun pomodoro:tick ()
