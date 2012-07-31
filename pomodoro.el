@@ -162,6 +162,8 @@
   (interactive "P")
   (if pomodoro:timer
     (error "Already start timer!!"))
+  (if (consp current-prefix-arg)
+      (setq arg (string-to-int (read-string "How long pomodoro time >> "))))
   (when (not (pomodoro:last-work-today-p))
     (message "Reset Pomodoro Count")
     (setq pomodoro:work-count 0))
