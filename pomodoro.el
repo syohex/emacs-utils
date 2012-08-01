@@ -148,11 +148,12 @@
 (defun pomodoro:current-time-to-string ()
   (format-time-string "%m:%d" (current-time)))
 
-(defvar pomodoro:last-work-time (pomodoro:current-time-to-string)
+(defvar pomodoro:last-work-time nil
   "Last time of pomodoro work(format 'Month:Day')")
 
 (defun pomodoro:last-work-today-p ()
-  (string= pomodoro:last-work-time (pomodoro:current-time-to-string)))
+  (or (not pomodoro:last-work-time)
+      (string= pomodoro:last-work-time (pomodoro:current-time-to-string))))
 
 (defun pomodoro:today-work-count ()
   (interactive)
@@ -167,6 +168,7 @@
   (when (not (pomodoro:last-work-today-p))
     (message "Reset Pomodoro Count")
     (setq pomodoro:work-count 0))
+  (setq pomodoro:last-work-time (pomodoro:current-time-to-string))
   (pomodoro:set-state 'working)
   (pomodoro:set-remainder-second (or arg pomodoro:work-time))
   (setq pomodoro:timer (run-with-timer 0 1 'pomodoro:tick)))
