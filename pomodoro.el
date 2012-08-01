@@ -174,7 +174,8 @@
 (defun pomodoro:stop (&optional do-reset)
   (interactive)
   (pomodoro:set-state nil)
-  (and do-reset (setq pomodoro:work-count 0))
+  (if do-reset
+      (setq pomodoro:work-count 0))
   (cancel-timer pomodoro:timer)
   (setq pomodoro:timer 'nil)
   (pomodoro:clear-mode-line))
