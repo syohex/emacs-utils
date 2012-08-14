@@ -36,7 +36,7 @@
 (defface hotentry:entry-face
   '((t (:inherit button)))
   "Face entry"
-  :group 'hotentry:faces)
+  :group 'hotentry)
 
 (defvar hotentry:favorites '()
   "Your favorite keys. These can be completioned at inputing key")
