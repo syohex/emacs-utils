@@ -75,7 +75,7 @@
 
 (defun sgit:log ()
   (interactive)
-  (sgit:git-cmd "log" nil))
+  (sgit:git-cmd "log" #'sgit:git-log-mode))
 
 (defun sgit:diff ()
   (interactive)
@@ -137,6 +137,20 @@
      ("Git Diff" . helm-c-git-diff)
      ("Open dired in file's directory" . helm-c-open-dired)))
   "Type for Files in Git Repos")
+
+(defface sgit:git-log-commit-header
+  '((t (:foreground "yellow" :weight bold)))
+  "Face of commit header"
+  :group 'sgit)
+
+(define-generic-mode sgit:git-log-mode
+  nil
+  nil
+  ;; highlight setting
+  '(("commit\\s-+[0-9a-zA-Z]+" . 'sgit:git-log-commit-header))
+  nil
+  nil
+  "Major mode for 'git log'")
 
 (provide 'sgit)
 
