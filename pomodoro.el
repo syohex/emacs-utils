@@ -1,6 +1,7 @@
 ;;; pomodoro.el --- Pomodoro Technique in Emacs
 
 ;; Author: Syohei Yoshida(syohex@gmail.com)
+;; Version: 0.01
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
