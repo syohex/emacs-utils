@@ -68,8 +68,7 @@
 
 (defun sgit:git-cmd (git-cmd mode-func)
   (let* ((file (buffer-file-name))
-         (cmd (or (and current-prefix-arg
-                       (sgit:prompt git-cmd (sgit:file-name file)))
+         (cmd (or (and current-prefix-arg (format "git %s ." git-cmd))
                   (format "git %s %s" git-cmd file))))
     (sgit:exec cmd mode-func)))
 
