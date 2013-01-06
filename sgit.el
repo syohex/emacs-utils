@@ -66,11 +66,18 @@
 (defun sgit:file-name (file)
   (file-relative-name file (sgit:top-directory)))
 
+(defun sgit:target-path ()
+  (cond ((equal current-prefix-arg '(16))  "")
+        ((equal current-prefix-arg '(4)) ".")
+        (t (buffer-file-name))))
+
 (defun sgit:git-cmd (git-cmd mode-func)
-  (let* ((file (buffer-file-name))
-         (cmd (or (and current-prefix-arg (format "git %s ." git-cmd))
-                  (format "git %s %s" git-cmd file))))
+  (let ((cmd (format "git %s %s" git-cmd (sgit:target-path))))
     (sgit:exec cmd mode-func)))
+
+(defun sgit:status ()
+  (interactive)
+  (sgit:git-cmd "status" #'sgit:git-log-mode))
 
 (defun sgit:log ()
   (interactive)
