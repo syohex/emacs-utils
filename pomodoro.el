@@ -43,6 +43,16 @@
   :group 'pomodoro
   :type 'integer)
 
+(defcustom pomodoro:iteration-for-long-rest 4
+  "Iteration count when switching to long rest"
+  :group 'pomodoro
+  :type 'integer)
+
+(defcustom pomodoro:max-iteration 0
+  "Iteration count to stop pomodoro"
+  :group 'pomodoro
+  :type 'integer)
+
 (defcustom pomodoro:mode-line-work-sign "●"
   "String in mode line at work"
   :group 'pomodoro
@@ -53,6 +63,16 @@
   :group 'pomodoro
   :type 'string)
 
+(defcustom pomodoro:mode-line-long-rest-sign "●"
+  "String in mode line at long rest"
+  :group 'pomodoro
+  :type 'string)
+
+(defcustom pomodoro:mode-line-time-display t
+  "Flag to display remaining time in the mode line."
+  :type 'boolean
+  :group 'pomodoro)
+
 (defface pomodoro:work-face
   '((t (:foreground "red")))
   "mode-line-face"
@@ -60,6 +80,11 @@
 
 (defface pomodoro:rest-face
   '((t (:foreground "blue")))
+  "mode-line-face"
+  :group 'pomodoro)
+
+(defface pomodoro:long-rest-face
+  '((t (:foreground "green")))
   "mode-line-face"
   :group 'pomodoro)
 
@@ -88,21 +113,29 @@
   `(setq pomodoro:remainder-seconds (* ,time 60)))
 
 (defun pomodoro:switch-to-long-rest ()
+  (pomodoro:set-state 'long-rest)
   (run-hooks 'pomodoro:long-rest-hook)
   (pomodoro:reset-remainder-time pomodoro:long-rest-time))
 
 (defun pomodoro:long-rest-p ()
-  (zerop (mod pomodoro:work-count 4)))
+  (zerop (mod pomodoro:work-count pomodoro:iteration-for-long-rest)))
 
 (defun pomodoro:switch-to-rest ()
   (pomodoro:set-state 'rest)
-  (find-file pomodoro:file)
+  (when pomodoro:file
+    (find-file pomodoro:file))
   (incf pomodoro:work-count)
-  (run-hooks 'pomodoro:finish-work-hook)
+  (message "%d time(s) pomodoro!" pomodoro:work-count)
   (cond ((pomodoro:long-rest-p)
          (pomodoro:switch-to-long-rest))
         (t
+	 (run-hooks 'pomodoro:finish-work-hook)
          (pomodoro:reset-remainder-time pomodoro:rest-time))))
+
+(defun pomodoro:switch-to-work ()
+  (pomodoro:set-state 'working)
+  (run-hooks 'pomodoro:finish-rest-hook)
+  (pomodoro:reset-remainder-time pomodoro:work-time))
 
 (defvar pomodoro:mode-line "")
 
@@ -110,25 +143,35 @@
   (format "%02d:%02d" (/ seconds 60) (mod seconds 60)))
 
 (defun pomodoro:propertize-sign ()
-  (if (eq pomodoro:current-state 'working)
-      (propertize pomodoro:mode-line-work-sign 'face 'pomodoro:work-face)
-    (propertize pomodoro:mode-line-rest-sign 'face 'pomodoro:rest-face)))
+  (cond ((eq pomodoro:current-state 'rest)
+	 (propertize pomodoro:mode-line-rest-sign 'face 'pomodoro:rest-face))
+	((eq pomodoro:current-state 'long-rest)
+	 (propertize pomodoro:mode-line-long-rest-sign 'face
+		     'pomodoro:long-rest-face))
+	((eq pomodoro:current-state 'working)
+	 (propertize pomodoro:mode-line-work-sign 'face 'pomodoro:work-face))
+	(t nil)))
 
 (defun pomodoro:propertize-mode-line ()
   (unless (string= pomodoro:mode-line "")
-    (concat (pomodoro:propertize-sign)
-            (propertize pomodoro:mode-line 'face 'pomodoro:timer-face))))
+    (if pomodoro:mode-line-time-display
+    	(concat (pomodoro:propertize-sign)
+    		(propertize pomodoro:mode-line 'face 'pomodoro:timer-face))
+      (pomodoro:propertize-sign))))
 
 (defun pomodoro:set-mode-line ()
   (setq pomodoro:mode-line
         (pomodoro:time-to-string pomodoro:remainder-seconds)))
 
 (defun pomodoro:expire ()
-  (if (eq pomodoro:current-state 'working)
-      (pomodoro:switch-to-rest)
-    (progn
-      (run-hooks 'pomodoro:finish-rest-hook)
-      (run-with-timer 0 nil 'pomodoro:stop))))
+  (cond ((or (eq pomodoro:current-state 'rest)
+	  (eq pomodoro:current-state 'long-rest))
+	 (pomodoro:switch-to-work))
+	((and (not (eq pomodoro:max-iteration 0))
+	      (<= pomodoro:max-iteration pomodoro:work-count))
+	 (run-with-timer 0 nil 'pomodoro:stop))
+	(t
+	 (pomodoro:switch-to-rest))))
 
 (defun pomodoro:tick ()
   (let ((remainder-seconds (1- pomodoro:remainder-seconds)))
@@ -160,6 +203,11 @@
   (interactive)
   (message "Today's Pomodoro Count is %d !!" pomodoro:work-count))
 
+(defun pomodoro:reset-work-count ()
+  (interactive)
+  (setq pomodoro:work-count 0)
+  (message "Reset the work-count %d." pomodoro:work-count))
+
 (defun pomodoro:start (arg)
   (interactive "P")
   (if pomodoro:timer
@@ -187,12 +235,17 @@
   (interactive)
   (pomodoro:stop t))
 
+(defun pomodoro:mode-line-time-display-toggle ()
+  "Toggle remaining time"
+  (interactive)
+  (setq pomodoro:mode-line-time-display (not pomodoro:mode-line-time-display)))
+
 (defvar pomodoro:set-mode-line-p nil)
 
 (unless pomodoro:set-mode-line-p
   (setq-default mode-line-format
                 (cons '(:eval (concat (pomodoro:propertize-mode-line)))
-                      mode-line-format))
+		      mode-line-format))
   (setq pomodoro:set-mode-line-p t))
 
 (provide 'pomodoro)
