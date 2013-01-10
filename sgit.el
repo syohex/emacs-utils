@@ -66,18 +66,22 @@
 (defun sgit:file-name (file)
   (file-relative-name file (sgit:top-directory)))
 
-(defun sgit:target-path ()
-  (cond ((equal current-prefix-arg '(16))  "")
-        ((equal current-prefix-arg '(4)) ".")
+(defun sgit:default-target (cmd)
+  (cond ((string= cmd "status") ".")
         (t (buffer-file-name))))
 
-(defun sgit:git-cmd (git-cmd mode-func)
-  (let ((cmd (format "git %s %s" git-cmd (sgit:target-path))))
+(defun sgit:target-path (cmd)
+  (cond ((equal current-prefix-arg '(16))  "")
+        ((equal current-prefix-arg '(4)) ".")
+        (t (sgit:default-target cmd))))
+
+(defun sgit:git-cmd (git-cmd &optional mode-func)
+  (let ((cmd (format "git %s %s" git-cmd (sgit:target-path git-cmd))))
     (sgit:exec cmd mode-func)))
 
 (defun sgit:status ()
   (interactive)
-  (sgit:git-cmd "status" #'sgit:git-log-mode))
+  (sgit:git-cmd "status"))
 
 (defun sgit:log ()
   (interactive)
@@ -86,63 +90,6 @@
 (defun sgit:diff ()
   (interactive)
   (sgit:git-cmd "diff" #'diff-mode))
-
-(defun helm-c-sgit-grep-init ()
-  (let ((precmd (sgit:prompt "grep" "-n"))
-        (file (or (and current-prefix-arg ".")
-                  (sgit:file-name (buffer-file-name)))))
-    (with-current-buffer (helm-candidate-buffer 'global)
-      (let* ((cmd (format "%s %s" precmd file))
-             (ret (call-process-shell-command cmd nil t)))
-        (unless (zerop ret)
-          (error (format "Failed '%s'" cmd)))))))
-
-(defvar helm-c-sgit-grep-source
-  '((name . "helm sgit")
-    (init . helm-c-sgit-grep-init)
-    (candidates-in-buffer)
-    (type . file-line)
-    (candidate-number-limit . 9999)))
-
-(defun sgit:grep ()
-  (interactive)
-  (helm :sources '(helm-c-sgit-grep-source)
-        :buffer (get-buffer-create sgit:buffer)))
-
-(defvar helm-git-file-buffer "*helm git*")
-
-(defun helm-c-git-exec (cmd &optional mode-func)
-  (when (get-buffer helm-git-file-buffer)
-    (kill-buffer (get-buffer helm-git-file-buffer)))
-  (with-current-buffer (get-buffer-create helm-git-file-buffer)
-    (setq buffer-read-only nil)
-    (erase-buffer)
-    (let ((ret (call-process-shell-command cmd nil t)))
-      (unless (zerop ret)
-        (error (format "Failed %s" cmd)))
-      (when mode-func
-        (funcall mode-func))
-      (setq buffer-read-only t)
-      (goto-char (point-min)))))
-
-(defun helm-c-git-log (candidate)
-  (let* ((option (or (and current-prefix-arg "-p --stat") ""))
-         (cmd (format "git log %s %s" option candidate)))
-    (helm-c-git-exec cmd)
-    (pop-to-buffer helm-git-file-buffer)))
-
-(defun helm-c-git-diff (candidate)
-  (let ((cmd (format "git diff %s" candidate)))
-    (helm-c-git-exec cmd #'diff-mode)
-    (pop-to-buffer helm-git-file-buffer)))
-
-(define-helm-type-attribute 'git-file
-  `((action
-     ("Find file" . helm-find-many-files)
-     ("Git Log" . helm-c-git-log)
-     ("Git Diff" . helm-c-git-diff)
-     ("Open dired in file's directory" . helm-c-open-dired)))
-  "Type for Files in Git Repos")
 
 (defface sgit:git-log-commit-header
   '((t (:foreground "yellow" :weight bold)))
