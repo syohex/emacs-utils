@@ -165,7 +165,7 @@
 
 (defun pomodoro:expire ()
   (cond ((or (eq pomodoro:current-state 'rest)
-	     (eq pomodoro:current-state 'long-rest))
+             (eq pomodoro:current-state 'long-rest))
          (pomodoro:switch-to-work))
         ((and (not (eq pomodoro:max-iteration 0))
               (<= pomodoro:max-iteration pomodoro:work-count))
@@ -211,7 +211,7 @@
 (defun pomodoro:start (arg)
   (interactive "P")
   (if pomodoro:timer
-      (error "Already start timer!!"))
+    (error "Already start timer!!"))
   (if (consp current-prefix-arg)
       (setq arg (string-to-int (read-string "How long pomodoro time >> "))))
   (when (not (pomodoro:last-work-today-p))
@@ -245,7 +245,7 @@
 (unless pomodoro:set-mode-line-p
   (setq-default mode-line-format
                 (cons '(:eval (concat (pomodoro:propertize-mode-line)))
-		      mode-line-format))
+                      mode-line-format))
   (setq pomodoro:set-mode-line-p t))
 
 (provide 'pomodoro)
