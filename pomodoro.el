@@ -129,7 +129,7 @@
   (cond ((pomodoro:long-rest-p)
          (pomodoro:switch-to-long-rest))
         (t
-	 (run-hooks 'pomodoro:finish-work-hook)
+         (run-hooks 'pomodoro:finish-work-hook)
          (pomodoro:reset-remainder-time pomodoro:rest-time))))
 
 (defun pomodoro:switch-to-work ()
@@ -144,19 +144,19 @@
 
 (defun pomodoro:propertize-sign ()
   (cond ((eq pomodoro:current-state 'rest)
-	 (propertize pomodoro:mode-line-rest-sign 'face 'pomodoro:rest-face))
-	((eq pomodoro:current-state 'long-rest)
-	 (propertize pomodoro:mode-line-long-rest-sign 'face
-		     'pomodoro:long-rest-face))
-	((eq pomodoro:current-state 'working)
-	 (propertize pomodoro:mode-line-work-sign 'face 'pomodoro:work-face))
-	(t nil)))
+         (propertize pomodoro:mode-line-rest-sign 'face 'pomodoro:rest-face))
+        ((eq pomodoro:current-state 'long-rest)
+         (propertize pomodoro:mode-line-long-rest-sign 'face
+                     'pomodoro:long-rest-face))
+        ((eq pomodoro:current-state 'working)
+         (propertize pomodoro:mode-line-work-sign 'face 'pomodoro:work-face))
+        (t nil)))
 
 (defun pomodoro:propertize-mode-line ()
   (unless (string= pomodoro:mode-line "")
     (if pomodoro:mode-line-time-display
-    	(concat (pomodoro:propertize-sign)
-    		(propertize pomodoro:mode-line 'face 'pomodoro:timer-face))
+        (concat (pomodoro:propertize-sign)
+                (propertize pomodoro:mode-line 'face 'pomodoro:timer-face))
       (pomodoro:propertize-sign))))
 
 (defun pomodoro:set-mode-line ()
@@ -165,13 +165,13 @@
 
 (defun pomodoro:expire ()
   (cond ((or (eq pomodoro:current-state 'rest)
-	  (eq pomodoro:current-state 'long-rest))
-	 (pomodoro:switch-to-work))
-	((and (not (eq pomodoro:max-iteration 0))
-	      (<= pomodoro:max-iteration pomodoro:work-count))
-	 (run-with-timer 0 nil 'pomodoro:stop))
-	(t
-	 (pomodoro:switch-to-rest))))
+	     (eq pomodoro:current-state 'long-rest))
+         (pomodoro:switch-to-work))
+        ((and (not (eq pomodoro:max-iteration 0))
+              (<= pomodoro:max-iteration pomodoro:work-count))
+         (run-with-timer 0 nil 'pomodoro:stop))
+        (t
+         (pomodoro:switch-to-rest))))
 
 (defun pomodoro:tick ()
   (let ((remainder-seconds (1- pomodoro:remainder-seconds)))
@@ -211,7 +211,7 @@
 (defun pomodoro:start (arg)
   (interactive "P")
   (if pomodoro:timer
-    (error "Already start timer!!"))
+      (error "Already start timer!!"))
   (if (consp current-prefix-arg)
       (setq arg (string-to-int (read-string "How long pomodoro time >> "))))
   (when (not (pomodoro:last-work-today-p))
