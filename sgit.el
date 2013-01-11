@@ -4,7 +4,6 @@
 
 ;; Author: Syohei YOSHIDA <syohex@gmail.com>
 ;; Version: 0.01
-;; Package-Requires: ((helm "1.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -23,11 +22,10 @@
 
 ;;; Code:
 
-(require 'helm)
 (require 'diff)
 
 (defgroup sgit nil
-  "Ack command with helm interface"
+  "Simple git utils"
   :prefix "sgit:"
   :group 'vc)
 
@@ -39,7 +37,8 @@
     (kill-buffer (get-buffer sgit:buffer)))
   (let ((buf (get-buffer-create sgit:buffer)))
     (with-current-buffer buf
-      (setq buffer-read-only nil)
+      (when buffer-read-only
+        (toggle-read-only))
       (erase-buffer)
       (let ((ret (call-process-shell-command cmd nil t)))
         (unless (zerop ret)
@@ -47,7 +46,7 @@
         (goto-char (point-min))
         (when mode-func
           (funcall mode-func))
-        (setq buffer-read-only t)
+        (toggle-read-only)
         (pop-to-buffer buf)))))
 
 (defun sgit:top-directory ()
