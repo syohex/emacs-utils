@@ -125,10 +125,8 @@
                       (loop for dir in (directory-files (helm-c-current-directory))
                             when (not (string-match "^\.\.?$" dir))
                             collect dir))))
-    (action . (("Open File" . (lambda (c)
-                                (find-file c)))
-               ("Open File Other buffer" . (lambda (c)
-                                             (find-file-other-window c)))))))
+    (action . (("Open File" . find-file)
+               ("Open File Other buffer" . find-file-other-window)))))
 
 (defun helm-myutils:files-in-curdir ()
   (interactive)
