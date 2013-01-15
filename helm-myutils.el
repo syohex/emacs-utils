@@ -117,6 +117,31 @@
 
 (global-set-key (kbd "<f10>") 'helm-myutils:dropbox)
 
+;; Open files in current directory
+(defvar helm-myutils:files-in-curdir-source
+  '((name . "Files in Current Directory")
+    (candidates . (lambda ()
+                    (with-helm-current-buffer
+                      (loop for dir in (directory-files (helm-c-current-directory))
+                            when (not (string-match "^\.\.?$" dir))
+                            collect dir))))
+    (action . (("Open File" . (lambda (c)
+                                (find-file c)))
+               ("Open File Other buffer" . (lambda (c)
+                                             (find-file-other-window c)))))))
+
+(defun helm-myutils:files-in-curdir ()
+  (interactive)
+  (let ((curbuf (current-buffer))
+        (orig-major major-mode))
+    (when (helm-other-buffer 'helm-myutils:files-in-curdir-source
+                             "*helm-dired*")
+      (and (eq orig-major 'dired-mode)
+           (eq curbuf (current-buffer))
+           (kill-buffer curbuf)))))
+
+(global-set-key (kbd "C-x C-p") 'helm-myutils:files-in-curdir)
+
 (provide 'helm-myutils)
 
 ;;; helm-myutils.el ends here
