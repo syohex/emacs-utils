@@ -208,6 +208,7 @@
   (setq pomodoro:work-count 0)
   (message "Reset the work-count %d." pomodoro:work-count))
 
+;;;###autoload
 (defun pomodoro:start (arg)
   (interactive "P")
   (if pomodoro:timer
