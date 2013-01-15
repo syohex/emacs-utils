@@ -249,4 +249,10 @@
   (setq pomodoro:set-mode-line-p t))
 
 (provide 'pomodoro)
+
+;; Local Variables:
+;; coding: utf-8
+;; indent-tabs-mode: nil
+;; End:
+
 ;;; pomodoro.el ends here
