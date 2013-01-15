@@ -97,7 +97,25 @@
      ("Git Diff" . helm-myutils:action-git-diff)))
   "Type for Files in Git Repos")
 
-(define-key global-map (kbd "C-;") 'helm-myutils:git-project)
+(global-set-key  (kbd "C-;") 'helm-myutils:git-project)
+
+;; Dropbox with helm interface
+(defvar helm-myutils:dropbox-source
+  '((name . "Files in Dropbox")
+    (init . (lambda ()
+              (let ((cmd (format "find ~/Dropbox -regex '%s' -type f"
+                                 ".*\\(org\\|txt\\)$*")))
+                (with-current-buffer (helm-candidate-buffer 'global)
+                  (call-process-shell-command cmd nil t)))))
+    (candidates-in-buffer)
+    (type . file)))
+
+(defun helm-myutils:dropbox ()
+  (interactive)
+  (helm :sources '(helm-myutils:dropbox-source)
+        :buffer "*helm dropbox*"))
+
+(global-set-key (kbd "<f10>") 'helm-myutils:dropbox)
 
 (provide 'helm-myutils)
 
