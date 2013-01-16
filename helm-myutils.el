@@ -103,11 +103,12 @@
 (defvar helm-myutils:dropbox-source
   '((name . "Files in Dropbox")
     (init . (lambda ()
-              (let ((cmd (format "find ~/Dropbox -regex '%s' -type f"
+              (let ((cmd (format "find ~/Dropbox/emacs -regex '%s' -type f"
                                  ".*\\(org\\|txt\\)$*")))
                 (with-current-buffer (helm-candidate-buffer 'global)
                   (call-process-shell-command cmd nil t)))))
     (candidates-in-buffer)
+    (volatile)
     (type . file)))
 
 (defun helm-myutils:dropbox ()
