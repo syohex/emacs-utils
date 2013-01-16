@@ -97,11 +97,18 @@
 (global-set-key  (kbd "C-;") 'helm-myutils:git-project)
 
 ;; Dropbox with helm interface
+(defvar helm-myutils:find-command
+  (cond ((eq system-type 'darwin)
+         (or (executable-find "gfind")
+             (error "Please install `gfind' in findutils")))
+        (t "find")))
+
 (defvar helm-myutils:dropbox-source
   '((name . "Files in Dropbox")
     (init . (lambda ()
-              (let ((cmd (format "find ~/Dropbox/emacs -regex '%s' -type f"
-                                 ".*\\(org\\|txt\\)$*")))
+              (let ((cmd (format "%s ~/Dropbox/emacs -regex '%s' -type f"
+                                 helm-myutils:find-command
+                                 "^.+\.\\(org\\|txt\\)$")))
                 (with-current-buffer (helm-candidate-buffer 'global)
                   (call-process-shell-command cmd nil t)))))
     (candidates-in-buffer)
