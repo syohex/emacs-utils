@@ -127,7 +127,11 @@
                             when (not (string-match "^\.\.?$" dir))
                             collect dir))))
     (action . (("Open File" . find-file)
-               ("Open File Other buffer" . find-file-other-window)))))
+               ("Open File Other buffer" . find-file-other-window)
+               ("Open File Other buffer to Right" .
+                (lambda (c)
+                  (let ((split-width-threshold 0))
+                    (find-file-other-window c))))))))
 
 (defun helm-myutils:files-in-curdir ()
   (interactive)
