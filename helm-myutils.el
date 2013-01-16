@@ -58,7 +58,7 @@
         '(("Modified files" . "--modified")
           ("Untracked files" . "--others --exclude-standard")
           ("All controlled files in this project" . nil))
-        for title  = (format "%s (%s)" (car elt) pwd)
+        for title  = (format "%s [%s]" (car elt) pwd)
         for option = (cdr elt)
         for cmd    = (format "git ls-files %s" (or option ""))
         collect
@@ -76,10 +76,6 @@
     "\n" ""
     (shell-command-to-string "git rev-parse --show-toplevel"))))
 
-(defun helm-myutils:git-shorten-dir (dir)
-  (let ((regexp (format "^%s" (or (getenv "HOME") ""))))
-    (replace-regexp-in-string regexp "~" dir)))
-
 (defun helm-myutils:git-project ()
   (interactive)
   (let ((topdir (helm-myutils:git-topdir)))
@@ -87,7 +83,8 @@
       (error "I'm not in Git Repository!!"))
     (let ((default-directory topdir)
           (sources (helm-c-sources-git-project
-                    (helm-myutils:git-shorten-dir topdir))))
+                    (file-name-nondirectory
+                     (directory-file-name topdir)))))
       (helm-other-buffer sources "*helm git project*"))))
 
 (define-helm-type-attribute 'git-file
