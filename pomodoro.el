@@ -209,25 +209,26 @@
   (message "Reset the work-count %d." pomodoro:work-count))
 
 ;;;###autoload
-(defun pomodoro:start (arg)
+(defun pomodoro:start (minutes)
   (interactive "P")
-  (if pomodoro:timer
+  (when pomodoro:timer
     (error "Already start timer!!"))
-  (if (consp current-prefix-arg)
-      (setq arg (string-to-number (read-string "How long pomodoro time >> "))))
+  (when (consp current-prefix-arg)
+    (setq minutes
+          (string-to-number (read-string "How long pomodoro minutes >> "))))
   (when (not (pomodoro:last-work-today-p))
     (message "Reset Pomodoro Count")
     (setq pomodoro:work-count 0))
   (setq pomodoro:last-work-time (pomodoro:current-time-to-string))
   (pomodoro:set-state 'working)
-  (pomodoro:set-remainder-second (or arg pomodoro:work-time))
+  (pomodoro:set-remainder-second (or minutes pomodoro:work-time))
   (setq pomodoro:timer (run-with-timer 0 1 'pomodoro:tick)))
 
 (defun pomodoro:stop (&optional do-reset)
   (interactive)
   (pomodoro:set-state nil)
-  (if do-reset
-      (setq pomodoro:work-count 0))
+  (when do-reset
+    (setq pomodoro:work-count 0))
   (cancel-timer pomodoro:timer)
   (setq pomodoro:timer 'nil)
   (pomodoro:clear-mode-line))
