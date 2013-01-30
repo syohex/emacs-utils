@@ -246,7 +246,7 @@
 
 (unless pomodoro:set-mode-line-p
   (setq-default mode-line-format
-                (cons '(:eval (concat (pomodoro:propertize-mode-line)))
+                (cons '(:eval (pomodoro:propertize-mode-line))
                       mode-line-format))
   (setq pomodoro:set-mode-line-p t))
 
