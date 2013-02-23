@@ -94,8 +94,6 @@
      ("Git Diff" . helm-myutils:action-git-diff)))
   "Type for Files in Git Repos")
 
-(global-set-key  (kbd "C-;") 'helm-myutils:git-project)
-
 ;; Dropbox with helm interface
 (defvar helm-myutils:find-command
   (cond ((eq system-type 'darwin)
@@ -120,8 +118,6 @@
   (helm :sources '(helm-myutils:dropbox-source)
         :buffer "*helm dropbox*"))
 
-(global-set-key (kbd "<f10>") 'helm-myutils:dropbox)
-
 ;; Open files in current directory
 (defvar helm-myutils:files-in-curdir-source
   '((name . "Files in Current Directory")
@@ -130,12 +126,7 @@
                       (loop for dir in (directory-files (helm-c-current-directory))
                             when (not (string-match "^\.\.?$" dir))
                             collect dir))))
-    (action . (("Open File" . find-file)
-               ("Open File Other buffer" . find-file-other-window)
-               ("Open File Other buffer to Right" .
-                (lambda (c)
-                  (let ((split-width-threshold 0))
-                    (find-file-other-window c))))))))
+    (type . file)))
 
 (defun helm-myutils:files-in-curdir ()
   (interactive)
@@ -146,8 +137,6 @@
       (and (eq orig-major 'dired-mode)
            (eq curbuf (current-buffer))
            (kill-buffer curbuf)))))
-
-(global-set-key (kbd "C-x C-p") 'helm-myutils:files-in-curdir)
 
 (provide 'helm-myutils)
 
