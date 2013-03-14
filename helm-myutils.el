@@ -87,11 +87,18 @@
                      (directory-file-name topdir)))))
       (helm-other-buffer sources "*helm git project*"))))
 
+(defun helm-myutils:action-insert (candidate)
+  (let ((buf (find-file-noselect candidate)))
+    (with-helm-current-buffer
+      (insert (with-current-buffer buf
+                (buffer-string))))))
+
 (define-helm-type-attribute 'git-file
   `((action
      ("Find file" . helm-find-many-files)
      ("Git Log" . helm-myutils:action-git-log)
-     ("Git Diff" . helm-myutils:action-git-diff)))
+     ("Git Diff" . helm-myutils:action-git-diff)
+     ("Insert buffer" . helm-myutils:action-insert)))
   "Type for Files in Git Repos")
 
 ;; Dropbox with helm interface
