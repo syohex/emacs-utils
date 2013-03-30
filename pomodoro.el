@@ -29,17 +29,17 @@
   :type 'string)
 
 (defcustom pomodoro:work-time 25
-  "Work minitus"
+  "Minutes of work period"
   :group 'pomodoro
   :type 'integer)
 
 (defcustom pomodoro:rest-time 5
-  "Rest minutes"
+  "Minutes of rest period"
   :group 'pomodoro
   :type 'integer)
 
 (defcustom pomodoro:long-rest-time 30
-  "Rest minutes"
+  "Minutes of long rest period"
   :group 'pomodoro
   :type 'integer)
 
