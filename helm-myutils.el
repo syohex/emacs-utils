@@ -76,6 +76,25 @@
     "\n" ""
     (shell-command-to-string "git rev-parse --show-toplevel"))))
 
+(defun helm-myutils:git-grep-source ()
+  `((name . ,(format "Grep at %s" default-directory))
+    (init . helm-myutils:git-grep-init)
+    (candidates-in-buffer)
+    (type . file-line)))
+
+(defun helm-myutils:git-grep-init ()
+  (with-current-buffer (helm-candidate-buffer 'global)
+    (let ((cmd (read-string "Grep: " "git grep -n ")))
+      (call-process-shell-command cmd nil t))))
+
+;;;###autoload
+(defun helm-myutils:git-grep ()
+  (interactive)
+  (let ((default-directory (helm-myutils:git-topdir)))
+    (helm :sources (helm-myutils:git-grep-source)
+          :buffer (get-buffer-create helm-myutils:git-action-buffer))))
+
+;;;###autoload
 (defun helm-myutils:git-project ()
   (interactive)
   (let ((topdir (helm-myutils:git-topdir)))
@@ -120,6 +139,7 @@
     (volatile)
     (type . file)))
 
+;;;###autoload
 (defun helm-myutils:dropbox ()
   (interactive)
   (helm :sources '(helm-myutils:dropbox-source)
