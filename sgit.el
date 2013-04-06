@@ -1,6 +1,6 @@
 ;;; sgit.el --- My own git utilities
 
-;; Copyright (C) 2012 by Syohei YOSHIDA
+;; Copyright (C) 2013 by Syohei YOSHIDA
 
 ;; Author: Syohei YOSHIDA <syohex@gmail.com>
 ;; Version: 0.01
@@ -78,17 +78,20 @@
   (let ((cmd (format "git %s %s" git-cmd (sgit:target-path git-cmd))))
     (sgit:exec cmd mode-func)))
 
+;;;###autoload
 (defun sgit:status ()
   (interactive)
   (sgit:git-cmd "status"))
 
+;;;###autoload
 (defun sgit:log ()
   (interactive)
-  (sgit:git-cmd "log" #'sgit:git-log-mode))
+  (sgit:git-cmd "log" 'sgit:git-log-mode))
 
+;;;###autoload
 (defun sgit:diff ()
   (interactive)
-  (sgit:git-cmd "diff" #'diff-mode))
+  (sgit:git-cmd "diff" 'diff-mode))
 
 (defface sgit:git-log-commit-header
   '((t (:foreground "yellow" :weight bold)))
