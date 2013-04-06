@@ -83,6 +83,7 @@
     (type . file-line)))
 
 (defun helm-myutils:git-grep-init ()
+  (helm-attrset 'recenter t)
   (with-current-buffer (helm-candidate-buffer 'global)
     (let ((cmd (read-string "Grep: " "git grep -n ")))
       (call-process-shell-command cmd nil t))))
