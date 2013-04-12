@@ -27,48 +27,20 @@
 
 (defvar helm-myutils:git-action-buffer "*helm git*")
 
-(defun helm-myutils:git-exec (cmd &optional mode-func)
-  (helm-aif (get-buffer helm-myutils:git-action-buffer)
-    (kill-buffer it))
-  (with-current-buffer (get-buffer-create helm-myutils:git-action-buffer)
-    (let ((ret (call-process-shell-command cmd nil t)))
-      (unless (zerop ret)
-        (error (format "Failed %s" cmd)))
-      (when mode-func
-        (funcall mode-func))
-      (setq buffer-read-only t)
-      (goto-char (point-min)))))
-
-(defun helm-myutils:action-git-common (cmd &optional mode-func)
-  (helm-myutils:git-exec cmd mode-func)
-  (pop-to-buffer (get-buffer helm-myutils:git-action-buffer)))
-
-(defun helm-myutils:action-git-log (candidate)
-  (let* ((option (or (and current-prefix-arg "-p --stat") ""))
-         (cmd (format "git log %s %s" option candidate)))
-    (helm-myutils:action-git-common cmd #'sgit:git-log-mode)))
-
-(defun helm-myutils:action-git-diff (candidate)
-  (let ((cmd (format "git diff %s" candidate)))
-    (helm-myutils:action-git-common cmd #'diff-mode)))
-
 ;; List files in git repos
-(defun helm-c-sources-git-project (pwd)
-  (loop for elt in
+(defun helm-myutils:git-project-source (pwd)
+  (loop for (description . option) in
         '(("Modified files" . "--modified")
           ("Untracked files" . "--others --exclude-standard")
-          ("All controlled files in this project" . nil))
-        for title  = (format "%s [%s]" (car elt) pwd)
-        for option = (cdr elt)
-        for cmd    = (format "git ls-files %s" (or option ""))
+          ("All controlled files in this project" . ""))
+        for cmd = (format "git ls-files %s" option)
         collect
-        `((name . ,title)
+        `((name . ,(format "%s [%s]" description pwd))
           (init . (lambda ()
-                    (unless (and (not ,option) (helm-candidate-buffer))
-                      (with-current-buffer (helm-candidate-buffer 'global)
-                        (call-process-shell-command ,cmd nil t)))))
+                    (with-current-buffer (helm-candidate-buffer 'global)
+                      (call-process-shell-command ,cmd nil t))))
           (candidates-in-buffer)
-          (type . git-file))))
+          (type . file))))
 
 (defun helm-myutils:git-topdir ()
   (file-name-as-directory
@@ -106,20 +78,6 @@
                     (file-name-nondirectory
                      (directory-file-name topdir)))))
       (helm-other-buffer sources "*helm git project*"))))
-
-(defun helm-myutils:action-insert (candidate)
-  (let ((buf (find-file-noselect candidate)))
-    (with-helm-current-buffer
-      (insert (with-current-buffer buf
-                (buffer-string))))))
-
-(define-helm-type-attribute 'git-file
-  `((action
-     ("Find file" . helm-find-many-files)
-     ("Git Log" . helm-myutils:action-git-log)
-     ("Git Diff" . helm-myutils:action-git-diff)
-     ("Insert buffer" . helm-myutils:action-insert)))
-  "Type for Files in Git Repos")
 
 ;; Dropbox with helm interface
 (defvar helm-myutils:find-command
