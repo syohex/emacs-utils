@@ -8,24 +8,24 @@ This is my own implementation.
 
 ### Customize
 
-#### pomodoro:file
+#### `pomodoro:file`
 
 Open file when a pomodoro is finished.
 No file is opened if `pomodoro:file` is `non-nil`.
 
-#### pomodoro:work-time(Default: 25)
+#### `pomodoro:work-time`(Default: 25)
 
 Minutes of work periodo.
 
-#### pomodoro:reset-time(Default: 5)
+#### `pomodoro:reset-time`(Default: 5)
 
 Minutes of short rest period.
 
-#### pomodoro:long-rest-time(Default: 30)
+#### `pomodoro:long-rest-time`(Default: 30)
 
 Minutes of long rest period.
 
-#### pomodoro:iteration-for-long-rest
+#### `pomodoro:iteration-for-long-rest`
 
 Iteration count when switching to long rest
 
@@ -66,6 +66,11 @@ My git utilities
 ## helm-myutils.el
 
 My own helm sources and them functions
+
+
+## emacsclient utilities for Linux Desktop
+* emacs_serverstart.pl
+* emacsclient.sh
 
 
 ## hotentry.el
