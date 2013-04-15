@@ -1,7 +1,12 @@
 #!/bin/sh
 
 set -e
-set -x
+
+for file in emacsclient.sh emacs_serverstart.pl
+do
+    ln -sf ${PWD}/${file} ~/bin
+    chmod +x ~/bin/${file}
+done
 
 for file in *.el
 do
