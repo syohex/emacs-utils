@@ -74,7 +74,7 @@
     (unless (file-directory-p topdir)
       (error "I'm not in Git Repository!!"))
     (let ((default-directory topdir)
-          (sources (helm-c-sources-git-project
+          (sources (helm-myutils:git-project-source
                     (file-name-nondirectory
                      (directory-file-name topdir)))))
       (helm-other-buffer sources "*helm git project*"))))
