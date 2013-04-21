@@ -40,7 +40,9 @@
                     (with-current-buffer (helm-candidate-buffer 'global)
                       (call-process-shell-command ,cmd nil t))))
           (candidates-in-buffer)
-          (type . file))))
+          (action . (("Open File" . find-file)
+                     ("Open File other window" . find-file-other-window)
+                     ("Insert buffer" . insert-file))))))
 
 (defun helm-myutils:git-topdir ()
   (file-name-as-directory
