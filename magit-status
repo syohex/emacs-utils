@@ -7,10 +7,17 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     exit
 fi
 
+case "$OSTYPE" in
+darwin*)
+        # Emacs may be installed by homebrew
+        exec /usr/local/bin/emacsclient $@
+esac
+
 WID_FILE=${HOME}/.emacs.d/server_wid
 if [ -e $WID_FILE ]; then
     WID=$(cat $WID_FILE)
     wmctrl -i -a $WID
 fi
 
-emacsclient -e "(magit-status \"$PWD\")" 2>&1 >/dev/null &
+dir=$(git rev-parse --show-toplevel 2>/dev/null)
+emacsclient -e "(magit-status \"$dir\")" 2>&1 >/dev/null &
