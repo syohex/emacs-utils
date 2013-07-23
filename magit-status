@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -e
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    echo "Here is not Git Repos"
+    exit
+fi
+
+WID_FILE=${HOME}/.emacs.d/server_wid
+if [ -e $WID_FILE ]; then
+    WID=$(cat $WID_FILE)
+    wmctrl -i -a $WID
+fi
+
+emacsclient -e "(magit-status \"$PWD\")" 2>&1 >/dev/null &

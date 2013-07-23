@@ -2,7 +2,7 @@
 
 set -e
 
-for file in emacsclient.sh emacs_serverstart.pl
+for file in emacsclient.sh emacs_serverstart.pl magit-status
 do
     ln -sf ${PWD}/${file} ~/bin
     chmod +x ~/bin/${file}
