@@ -37,8 +37,7 @@
     (kill-buffer (get-buffer sgit:buffer)))
   (let ((buf (get-buffer-create sgit:buffer)))
     (with-current-buffer buf
-      (when buffer-read-only
-        (toggle-read-only))
+      (setq buffer-read-only nil)
       (erase-buffer)
       (let ((ret (call-process-shell-command cmd nil t)))
         (unless (zerop ret)
@@ -46,7 +45,7 @@
         (goto-char (point-min))
         (when mode-func
           (funcall mode-func))
-        (toggle-read-only)
+        (setq buffer-read-only t)
         (pop-to-buffer buf)))))
 
 (defun sgit:top-directory ()
@@ -65,23 +64,16 @@
 (defun sgit:file-name (file)
   (file-relative-name file (sgit:top-directory)))
 
-(defun sgit:default-target (cmd)
-  (cond ((string= cmd "status") ".")
-        (t (buffer-file-name))))
-
-(defun sgit:target-path (cmd)
-  (cond ((equal current-prefix-arg '(16))  "")
-        ((equal current-prefix-arg '(4)) ".")
-        (t (sgit:default-target cmd))))
-
-(defun sgit:git-cmd (git-cmd &optional mode-func)
-  (let ((cmd (format "git %s %s" git-cmd (sgit:target-path git-cmd))))
+(defun sgit:git-cmd (subcmd &optional mode-func)
+  (let ((cmd (format "git %s %s"
+                     subcmd
+                     (expand-file-name (buffer-file-name)))))
     (sgit:exec cmd mode-func)))
 
 ;;;###autoload
 (defun sgit:status ()
   (interactive)
-  (sgit:git-cmd "status"))
+  (sgit:git-cmd (concat "status" " .")))
 
 ;;;###autoload
 (defun sgit:log ()
@@ -91,7 +83,10 @@
 ;;;###autoload
 (defun sgit:diff ()
   (interactive)
-  (sgit:git-cmd "diff" 'diff-mode))
+  (let ((cmd (if current-prefix-arg
+                 "diff --cached"
+               "diff")))
+    (sgit:git-cmd cmd 'diff-mode)))
 
 (defface sgit:git-log-commit-header
   '((t (:foreground "yellow" :weight bold)))
