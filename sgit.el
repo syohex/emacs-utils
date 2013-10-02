@@ -78,7 +78,10 @@
 ;;;###autoload
 (defun sgit:log ()
   (interactive)
-  (sgit:git-cmd "log" 'sgit:git-log-mode))
+  (let ((cmd (if current-prefix-arg
+                 "log -p --stat "
+               "log")))
+    (sgit:git-cmd cmd)))
 
 ;;;###autoload
 (defun sgit:diff ()
@@ -92,15 +95,6 @@
   '((t (:foreground "yellow" :weight bold)))
   "Face of commit header"
   :group 'sgit)
-
-(define-generic-mode sgit:git-log-mode
-  nil
-  nil
-  ;; highlight setting
-  '(("commit\\s-+[0-9a-zA-Z]+" . 'sgit:git-log-commit-header))
-  nil
-  nil
-  "Major mode for 'git log'")
 
 (provide 'sgit)
 
