@@ -91,6 +91,32 @@
                "diff")))
     (sgit:git-cmd cmd 'diff-mode)))
 
+(defvar sgit:grep-history nil)
+
+(defun sgit:grep-init ()
+  (let ((cmd (read-string "> "
+                          "git grep -n "
+                          'sgit:grep-history)))
+    (helm-attrset 'recenter t)
+    (with-current-buffer (helm-candidate-buffer 'global)
+      (unless (zerop (call-process-shell-command cmd nil t))
+        (error "Failed: '%s'" cmd))
+      (when (zerop (length (buffer-string)))
+        (error "No output: '%s'" cmd)))))
+
+(defvar sgit-source-grep
+  '((name . "sgit git grep")
+    (init . sgit:grep-init)
+    (candidates-in-buffer)
+    (type . file-line)
+    (candidate-number-limit . 9999)))
+
+;;;###autoload
+(defun sgit:grep ()
+  (interactive)
+  (let ((default-directory (sgit:top-directory)))
+    (helm :sources '(sgit-source-grep) :buffer "*sgit-grep*")))
+
 (defface sgit:git-log-commit-header
   '((t (:foreground "yellow" :weight bold)))
   "Face of commit header"
