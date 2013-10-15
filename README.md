@@ -72,6 +72,10 @@ My own helm sources and them functions
 * emacs_serverstart.pl
 * emacsclient.sh
 
+### Note
+
+[Xfce4 Desktop](http://www.xfce.org/) does not need these script.
+
 
 ## hotentry.el
 
