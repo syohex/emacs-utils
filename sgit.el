@@ -95,7 +95,8 @@
 
 (defun sgit:grep-init ()
   (let ((cmd (read-string "> "
-                          "git grep -n "
+                          (substring-no-properties
+                           (format "git grep -n %s" (thing-at-point 'symbol)))
                           'sgit:grep-history)))
     (helm-attrset 'recenter t)
     (with-current-buffer (helm-candidate-buffer 'global)
