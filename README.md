@@ -80,3 +80,38 @@ My own helm sources and them functions
 ## hotentry.el
 
 Simple hotentry viewer
+
+
+## editutil.el
+
+```
+(dolist (func '(editutil-edit-next-line
+                editutil-edit-previous-line
+                editutil-unwrap-at-point
+                editutil-replace-wrapped-string
+                editutil-edit-next-line-no-indent
+                editutil-edit-next-line-same-column
+                editutil-zap-to-char
+                editutil-next-symbol
+                editutil-previous-symbol
+                editutil-forward-char
+                editutil-backward-char
+                editutil-move-line-up
+                editutil-move-line-down))
+  (autoload func "editutil" nil t))
+
+(global-set-key [(control shift up)] 'editutil-move-line-up)
+(global-set-key [(control shift down)] 'editutil-move-line-down)
+
+(global-set-key (kbd "C-M-s") 'editutil-forward-char)
+(global-set-key (kbd "C-M-r") 'editutil-previous-char)
+
+(global-set-key (kbd "M-o") 'editutil-edit-next-line)
+
+(global-set-key (kbd "M-s") 'editutil-unwrap-at-point)
+(global-set-key (kbd "M-r") 'editutil-replace-wrapped-string)
+(global-set-key (kbd "M-z") 'editutil-zap-to-char)
+
+(global-set-key (kbd "M-n") 'editutil-next-symbol)
+(global-set-key (kbd "M-p") 'editutil-previous-symbol)
+```
