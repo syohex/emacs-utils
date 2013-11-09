@@ -76,7 +76,7 @@
 ;;;###autoload
 (defun editutil-edit-previous-line (arg)
   (interactive "p")
-  (dotimes (i (- arg))
+  (dotimes (i arg)
     (forward-line -1)
     (unless (= (line-number-at-pos) 1)
       (end-of-line))
@@ -89,7 +89,7 @@
       (dotimes (i arg)
         (end-of-line)
         (newline-and-indent))
-    (editutil-edit-previous-line arg)))
+    (editutil-edit-previous-line (- arg))))
 
 ;;;###autoload
 (defun editutil-edit-next-line-no-indent (arg)
