@@ -107,6 +107,7 @@ Simple hotentry viewer
 (global-set-key (kbd "C-M-r") 'editutil-previous-char)
 
 (global-set-key (kbd "M-o") 'editutil-edit-next-line)
+(global-set-key (kbd "M-O") 'editutil-edit-previous-line)
 
 (global-set-key (kbd "M-s") 'editutil-unwrap-at-point)
 (global-set-key (kbd "M-r") 'editutil-replace-wrapped-string)
