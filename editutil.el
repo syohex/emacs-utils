@@ -159,6 +159,8 @@
     (if (editutil--last-command-move-char-p)
         (setq char editutil--last-search-char)
       (setq char (read-char "Forward Char: "))))
+  (unless (char-or-string-p char)
+    (error "Error: Input Invalid Char %d" char))
   (setq editutil--last-search-char char)
   (when (>= arg 0)
     (forward-char 1))
