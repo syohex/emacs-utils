@@ -76,11 +76,14 @@
 ;;;###autoload
 (defun editutil-edit-previous-line (arg)
   (interactive "p")
-  (dotimes (i arg)
-    (forward-line -1)
-    (unless (= (line-number-at-pos) 1)
-      (end-of-line))
-    (newline-and-indent)))
+  (if (< arg 0)
+      (editutil-edit-next-line (- arg))
+    (dotimes (i arg)
+      (if (= (line-number-at-pos) 1)
+          (goto-char (line-beginning-position))
+        (forward-line -1)
+        (end-of-line))
+      (newline-and-indent))))
 
 ;;;###autoload
 (defun editutil-edit-next-line (arg)
