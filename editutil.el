@@ -138,7 +138,7 @@
     (when (char-table-p translation-table-for-input)
       (setq char (or (aref translation-table-for-input char) char))))
   (delete-region (point)
-                 (progn
+                 (let ((case-fold-search nil))
                    (when (>= arg 0)
                      (forward-char 1))
                    (search-forward (char-to-string char) nil nil arg)
