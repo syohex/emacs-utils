@@ -25,6 +25,8 @@
 (eval-when-compile
   (require 'cl))
 
+(declare-function copy-sexp "thingopt")
+
 (require 'thingatpt)
 
 (defvar editutil--unwrap-pair
