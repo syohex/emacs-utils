@@ -216,6 +216,96 @@
   (forward-line -1)
   (indent-according-to-mode))
 
+;;;###autoload
+(defun editutil-delete-following-spaces (arg)
+  (interactive "p")
+  (let ((orig-point (point)))
+    (save-excursion
+      (if (<= arg 0)
+          (skip-chars-backward " \t")
+        (skip-chars-forward " \t"))
+      (delete-region orig-point (point)))))
+
+;;;###autoload
+(defun editutil-yank (arg)
+  (interactive "P")
+  (setq yank-window-start (window-start))
+  (setq this-command t)
+  (push-mark (point))
+  (let ((str (current-kill 0)))
+    (dotimes (i (or arg 1))
+      (insert-for-yank str)))
+  (when (eq this-command t)
+    (setq this-command 'yank))
+  nil)
+
+;;;###autoload
+(defun editutil-insert-newline-without-moving ()
+  (interactive)
+  (save-excursion
+    (newline)))
+
+;;;###autoload
+(defun editutil-delete-word (arg)
+  (interactive "p")
+  (delete-region (point) (progn (forward-word arg) (point))))
+
+;;;###autoload
+(defun editutil-backward-delete-word (arg)
+  (interactive "p")
+  (editutil-delete-word (- arg)))
+
+;;;###autoload
+(defun editutil-number-rectangle (start end format-string from)
+  "Delete (don't save) text in the region-rectangle, then number it."
+  (interactive
+   (list (region-beginning) (region-end)
+         (read-string "Number rectangle: " (if (looking-back "^ *") "%d. " "%d"))
+         (read-number "From: " 1)))
+  (save-excursion
+    (goto-char start)
+    (setq start (point-marker))
+    (goto-char end)
+    (setq end (point-marker))
+    (delete-rectangle start end)
+    (goto-char start)
+    (loop with column = (current-column)
+          while (and (<= (point) end) (not (eobp)))
+          for i from from   do
+          (move-to-column column t)
+          (insert (format format-string i))
+          (forward-line 1)))
+  (goto-char start))
+
+;;;###autoload
+(defun editutil-copy-sexp ()
+  (interactive)
+  (copy-sexp)
+  (message "%s" (thing-at-point 'sexp)))
+
+;;;###autoload
+(defun editutil-duplicate-thing (n)
+  (interactive "p")
+  (let ((orig-column (current-column))
+        (lines (if mark-active
+                   (1+ (- (line-number-at-pos (region-end))
+                          (line-number-at-pos (region-beginning))))
+                 1)))
+    (save-excursion
+      (let ((orig-line (line-number-at-pos))
+            (str (if mark-active
+                     (buffer-substring (region-beginning) (region-end))
+                   (buffer-substring (line-beginning-position)
+                                     (line-end-position)))))
+        (forward-line 1)
+        ;; maybe last line
+        (when (= orig-line (line-number-at-pos))
+          (insert "\n"))
+        (dotimes (i (or n 1))
+          (insert str "\n"))))
+    (forward-line lines)
+    (move-to-column orig-column)))
+
 (provide 'editutil)
 
 ;;; editutil.el ends here

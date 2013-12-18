@@ -84,21 +84,10 @@ Simple hotentry viewer
 
 ## editutil.el
 
-```
-(dolist (func '(editutil-edit-next-line
-                editutil-edit-previous-line
-                editutil-unwrap-at-point
-                editutil-replace-wrapped-string
-                editutil-edit-next-line-no-indent
-                editutil-edit-next-line-same-column
-                editutil-zap-to-char
-                editutil-next-symbol
-                editutil-previous-symbol
-                editutil-forward-char
-                editutil-backward-char
-                editutil-move-line-up
-                editutil-move-line-down))
-  (autoload func "editutil" nil t))
+My configuration is:
+
+```lisp
+(require 'editutil)
 
 (global-set-key [(control shift up)] 'editutil-move-line-up)
 (global-set-key [(control shift down)] 'editutil-move-line-down)
@@ -115,4 +104,21 @@ Simple hotentry viewer
 
 (global-set-key (kbd "M-n") 'editutil-next-symbol)
 (global-set-key (kbd "M-p") 'editutil-previous-symbol)
+
+(global-set-key (kbd "M-k") 'editutil-delete-following-spaces)
+
+(global-set-key (kbd "C-y") 'editutil-yank)
+
+(global-set-key (kbd "M-d") 'editutil-delete-word)
+(global-set-key (kbd "M-<backspace>") 'editutil-backward-delete-word)
+
+(global-set-key (kbd "C-x r N") 'editutil-number-rectangle)
+
+(global-set-key (kbd "C-M-SPC") 'editutil-copy-sexp)
+
+(smartrep-define-key
+    global-map "C-x" '(("j" . 'editutil-insert-newline-without-moving)))
+
+(smartrep-define-key
+    global-map "M-g" '(("c" . 'editutil-duplicate-thing)))
 ```
