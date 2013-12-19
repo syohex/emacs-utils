@@ -88,7 +88,9 @@ My configuration is:
 
 ```lisp
 (require 'editutil)
+(editutil-default-setup)
 
+;; Default Bindings
 (global-set-key [(control shift up)] 'editutil-move-line-up)
 (global-set-key [(control shift down)] 'editutil-move-line-down)
 
