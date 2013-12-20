@@ -124,3 +124,14 @@ My configuration is:
 (smartrep-define-key
     global-map "M-g" '(("c" . 'editutil-duplicate-thing)))
 ```
+
+### editutil for view-mode
+
+```lisp
+(eval-after-load "view"
+  '(progn
+     (define-key view-mode-map (kbd "i") 'editutil-view-insert)
+     (define-key view-mode-map (kbd "a") 'editutil-view-insert-at-next)
+     (define-key view-mode-map (kbd "I") 'editutil-view-insert-at-bol)
+     (define-key view-mode-map (kbd "A") 'editutil-view-insert-at-eol)))
+```
