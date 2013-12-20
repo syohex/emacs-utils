@@ -310,6 +310,33 @@
     (move-to-column orig-column)))
 
 ;;;###autoload
+(defun editutil-view-insert ()
+  (interactive)
+  (when view-mode
+    (view-mode -1)))
+
+;;;###autoload
+(defun editutil-view-insert-at-next ()
+  (interactive)
+  (when view-mode
+    (view-mode -1))
+  (forward-char 1))
+
+;;;###autoload
+(defun editutil-view-insert-at-bol ()
+  (interactive)
+  (when view-mode
+    (view-mode -1))
+  (back-to-indentation))
+
+;;;###autoload
+(defun editutil-view-insert-at-eol ()
+  (interactive)
+  (when view-mode
+    (view-mode -1))
+  (goto-char (line-end-position)))
+
+;;;###autoload
 (defun editutil-default-setup ()
   (interactive)
 
