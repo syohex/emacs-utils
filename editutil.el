@@ -337,6 +337,12 @@
   (goto-char (line-end-position)))
 
 ;;;###autoload
+(defun editutil-goto-last-line ()
+  (interactive)
+  (goto-char (point-max))
+  (goto-char (line-beginning-position)))
+
+;;;###autoload
 (defun editutil-default-setup ()
   (interactive)
 
