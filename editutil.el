@@ -346,6 +346,11 @@
   (goto-char (line-beginning-position)))
 
 ;;;###autoload
+(defun editutil-backward-symbol ()
+  (interactive)
+  (forward-symbol -1))
+
+;;;###autoload
 (defun editutil-default-setup ()
   (interactive)
 
