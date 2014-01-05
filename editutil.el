@@ -248,10 +248,16 @@
   (save-excursion
     (newline)))
 
+(defsubst editutil--enable-subword-mode-p ()
+  (and (boundp 'subword-mode) subword-mode))
+
 ;;;###autoload
 (defun editutil-delete-word (arg)
   (interactive "p")
-  (delete-region (point) (progn (forward-word arg) (point))))
+  (delete-region (point) (progn
+                           (if (editutil--enable-subword-mode-p)
+                               (subword-forward arg)
+                             (forward-word arg)) (point))))
 
 ;;;###autoload
 (defun editutil-backward-delete-word (arg)
@@ -261,7 +267,9 @@
   (when (looking-back "\\s-+")
     (skip-chars-backward " \t"))
   (let ((start (save-excursion
-                 (forward-word (- arg))
+                 (if (editutil--enable-subword-mode-p)
+                     (subword-backward arg)
+                   (forward-word (- arg)))
                  (point)))
         (non-space (save-excursion
                      (skip-chars-backward "^ \t")
