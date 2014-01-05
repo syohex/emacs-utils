@@ -369,6 +369,7 @@
   (global-set-key (kbd "C-y") 'editutil-yank)
   (global-set-key (kbd "M-d") 'editutil-delete-word)
   (global-set-key (kbd "M-<backspace>") 'editutil-backward-delete-word)
+  (global-set-key (kbd "M-DEL") 'editutil-backward-delete-word)
   (global-set-key (kbd "C-x r N") 'editutil-number-rectangle)
   (global-set-key (kbd "C-M-SPC") 'editutil-copy-sexp)
 
