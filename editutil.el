@@ -256,10 +256,17 @@
 ;;;###autoload
 (defun editutil-backward-delete-word (arg)
   (interactive "p")
+  (when (= (point) (line-beginning-position))
+    (backward-char 1))
+  (when (looking-back "\\s-+")
+    (skip-chars-backward " \t"))
   (let ((start (save-excursion
                  (forward-word (- arg))
-                 (point))))
-    (delete-region (max start (line-beginning-position)) (point))))
+                 (point)))
+        (non-space (save-excursion
+                     (skip-chars-backward "^ \t")
+                     (point))))
+    (delete-region (max start non-space (line-beginning-position)) (point))))
 
 ;;;###autoload
 (defun editutil-number-rectangle (start end format-string from)
