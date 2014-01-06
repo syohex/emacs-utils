@@ -27,6 +27,8 @@
 
 (declare-function copy-sexp "thingopt")
 (declare-function smartrep-define-key "smartrep")
+(declare-function subword-forward "subword")
+(declare-function subword-backward "subword")
 
 (require 'thingatpt)
 
