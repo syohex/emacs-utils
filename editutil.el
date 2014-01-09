@@ -375,8 +375,13 @@
                        (forward-line -1)
                        (back-to-indentation)
                        (current-indentation))))
-    (when (< cur-indent prev-indent)
-      (insert-char (string-to-char " ") (- prev-indent cur-indent)))))
+    (if (< cur-indent prev-indent)
+        (progn
+          (back-to-indentation)
+          (insert-char (string-to-char " ") (- prev-indent cur-indent)))
+      (goto-char (line-beginning-position))
+      (delete-horizontal-space)
+      (insert-char (string-to-char " ") prev-indent))))
 
 ;;;###autoload
 (defun editutil-default-setup ()
