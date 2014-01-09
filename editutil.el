@@ -368,6 +368,17 @@
   (forward-symbol -1))
 
 ;;;###autoload
+(defun editutil-indent-same-as-previous-line ()
+  (interactive)
+  (let ((cur-indent (current-indentation))
+        (prev-indent (save-excursion
+                       (forward-line -1)
+                       (back-to-indentation)
+                       (current-indentation))))
+    (when (< cur-indent prev-indent)
+      (insert-char (string-to-char " ") (- prev-indent cur-indent)))))
+
+;;;###autoload
 (defun editutil-default-setup ()
   (interactive)
 
@@ -388,6 +399,7 @@
   (global-set-key [remap backward-kill-word] 'editutil-backward-delete-word)
   (global-set-key (kbd "C-x r N") 'editutil-number-rectangle)
   (global-set-key (kbd "C-M-SPC") 'editutil-copy-sexp)
+  (global-set-key (kbd "M-I") 'editutil-indent-same-as-previous-line)
 
   (smartrep-define-key
       global-map "C-x" '(("j" . 'editutil-insert-newline-without-moving)))
