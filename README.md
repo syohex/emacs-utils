@@ -112,11 +112,12 @@ My configuration is:
 (global-set-key (kbd "C-y") 'editutil-yank)
 
 (global-set-key (kbd "M-d") 'editutil-delete-word)
-(global-set-key (kbd "M-<backspace>") 'editutil-backward-delete-word)
+(global-set-key [remap backward-kill-word] 'editutil-backward-delete-word)
 
 (global-set-key (kbd "C-x r N") 'editutil-number-rectangle)
 
 (global-set-key (kbd "C-M-SPC") 'editutil-copy-sexp)
+(global-set-key (kbd "M-I") 'editutil-indent-same-as-previous-line)
 
 (smartrep-define-key
     global-map "C-x" '(("j" . 'editutil-insert-newline-without-moving)))
