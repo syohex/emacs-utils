@@ -384,6 +384,14 @@
       (insert-char (string-to-char " ") prev-indent))))
 
 ;;;###autoload
+(defun editutil-copy-line (arg)
+  (interactive "p")
+  (let ((start (line-beginning-position)))
+    (save-excursion
+      (forward-line (1- arg))
+      (kill-ring-save start (line-end-position)))))
+
+;;;###autoload
 (defun editutil-default-setup ()
   (interactive)
 
