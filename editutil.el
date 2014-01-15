@@ -392,6 +392,14 @@
       (kill-ring-save start (line-end-position)))))
 
 ;;;###autoload
+(defun editutil-isearch-exit ()
+  (interactive)
+  (isearch-exit)
+  (if (> (match-beginning 0) (point))
+      (backward-char (length isearch-string))
+    (goto-char (match-beginning 0))))
+
+;;;###autoload
 (defun editutil-default-setup ()
   (interactive)
 
@@ -413,6 +421,8 @@
   (global-set-key (kbd "C-x r N") 'editutil-number-rectangle)
   (global-set-key (kbd "C-M-SPC") 'editutil-copy-sexp)
   (global-set-key (kbd "M-I") 'editutil-indent-same-as-previous-line)
+
+  (define-key isearch-mode-map [remap isearch-exit] 'editutil-isearch-exit)
 
   (smartrep-define-key
       global-map "C-x" '(("j" . 'editutil-insert-newline-without-moving)))
