@@ -119,6 +119,8 @@ My configuration is:
 (global-set-key (kbd "C-M-SPC") 'editutil-copy-sexp)
 (global-set-key (kbd "M-I") 'editutil-indent-same-as-previous-line)
 
+(define-key isearch-mode-map [remap isearch-exit] 'editutil-isearch-exit)
+
 (smartrep-define-key
     global-map "C-x" '(("j" . 'editutil-insert-newline-without-moving)))
 
