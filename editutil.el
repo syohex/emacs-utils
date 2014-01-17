@@ -395,9 +395,8 @@
 (defun editutil-isearch-exit ()
   (interactive)
   (isearch-exit)
-  (if (> (match-beginning 0) (point))
-      (backward-char (length isearch-string))
-    (goto-char (match-beginning 0))))
+  (when isearch-forward
+    (backward-char (length isearch-string))))
 
 ;;;###autoload
 (defun editutil-default-setup ()
