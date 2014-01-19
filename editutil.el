@@ -399,6 +399,25 @@
     (backward-char (length isearch-string))))
 
 ;;;###autoload
+(defun editutil-backward-up (arg)
+  (interactive "p")
+  (or (ignore-errors
+        (backward-up-list arg)
+        t)
+      (if (nth 3 (syntax-ppss)) ;; in string
+          (skip-syntax-backward "^\"")
+        (skip-syntax-backward "^("))
+      (backward-char)))
+
+;;;###autoload
+(defun editutil-minibuffer-up-dir ()
+  (interactive)
+  (backward-char 1)
+  (when (search-backward "/" nil t)
+    (delete-region (1+ (point)) (line-end-position))
+    (forward-char 1)))
+
+;;;###autoload
 (defun editutil-default-setup ()
   (interactive)
 
@@ -406,6 +425,7 @@
   (global-set-key [(control shift down)] 'editutil-move-line-down)
   (global-set-key (kbd "C-M-s") 'editutil-forward-char)
   (global-set-key (kbd "C-M-r") 'editutil-backward-char)
+  (global-set-key (kbd "C-M-u") 'editutil-backward-up)
   (global-set-key (kbd "M-o") 'editutil-edit-next-line)
   (global-set-key (kbd "M-O") 'editutil-edit-previous-line)
   (global-set-key (kbd "M-s") 'editutil-unwrap-at-point)
@@ -422,6 +442,8 @@
   (global-set-key (kbd "M-I") 'editutil-indent-same-as-previous-line)
 
   (define-key isearch-mode-map [remap isearch-exit] 'editutil-isearch-exit)
+
+  (define-key minibuffer-local-map (kbd "C-M-u") 'editutil-minibuffer-up-dir)
 
   (smartrep-define-key
       global-map "C-x" '(("j" . 'editutil-insert-newline-without-moving)))
