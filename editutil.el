@@ -22,8 +22,7 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'cl))
+(require 'cl-lib)
 
 (declare-function copy-sexp "thingopt")
 (declare-function smartrep-define-key "smartrep")
@@ -292,12 +291,12 @@
     (setq end (point-marker))
     (delete-rectangle start end)
     (goto-char start)
-    (loop with column = (current-column)
-          while (and (<= (point) end) (not (eobp)))
-          for i from from   do
-          (move-to-column column t)
-          (insert (format format-string i))
-          (forward-line 1)))
+    (cl-loop with column = (current-column)
+             while (and (<= (point) end) (not (eobp)))
+             for i from from   do
+             (move-to-column column t)
+             (insert (format format-string i))
+             (forward-line 1)))
   (goto-char start))
 
 ;;;###autoload
