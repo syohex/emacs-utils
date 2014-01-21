@@ -417,6 +417,11 @@
     (forward-char 1)))
 
 ;;;###autoload
+(defun editutil-insert-parentheses (arg)
+  (interactive "P")
+  (insert-parentheses (or arg 1)))
+
+;;;###autoload
 (defun editutil-default-setup ()
   (interactive)
 
@@ -439,6 +444,7 @@
   (global-set-key (kbd "C-x r N") 'editutil-number-rectangle)
   (global-set-key (kbd "C-M-SPC") 'editutil-copy-sexp)
   (global-set-key (kbd "M-I") 'editutil-indent-same-as-previous-line)
+  (global-set-key (kbd "M-(") 'editutil-insert-parentheses)
 
   (define-key isearch-mode-map [remap isearch-exit] 'editutil-isearch-exit)
 
