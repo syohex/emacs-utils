@@ -400,13 +400,22 @@
 ;;;###autoload
 (defun editutil-backward-up (arg)
   (interactive "p")
-  (or (ignore-errors
-        (backward-up-list arg)
-        t)
-      (if (nth 3 (syntax-ppss)) ;; in string
-          (skip-syntax-backward "^\"")
-        (skip-syntax-backward "^("))
-      (backward-char)))
+  (unless (ignore-errors
+            (backward-up-list arg)
+            t)
+    (if (nth 3 (syntax-ppss)) ;; in string
+        (skip-syntax-backward "^\"")
+      (skip-syntax-backward "^("))
+    (backward-char 1)))
+
+;;;###autoload
+(defun editutil-forward-list (arg)
+  (interactive "p")
+  (unless (ignore-errors
+            (forward-list arg)
+            t)
+    (editutil-backward-up arg)
+    (forward-sexp arg)))
 
 ;;;###autoload
 (defun editutil-minibuffer-up-dir ()
@@ -430,6 +439,7 @@
   (global-set-key (kbd "C-M-s") 'editutil-forward-char)
   (global-set-key (kbd "C-M-r") 'editutil-backward-char)
   (global-set-key (kbd "C-M-u") 'editutil-backward-up)
+  (global-set-key (kbd "C-M-n") 'editutil-forward-list)
   (global-set-key (kbd "M-o") 'editutil-edit-next-line)
   (global-set-key (kbd "M-O") 'editutil-edit-previous-line)
   (global-set-key (kbd "M-s") 'editutil-unwrap-at-point)
