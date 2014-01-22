@@ -400,13 +400,15 @@
 ;;;###autoload
 (defun editutil-backward-up (arg)
   (interactive "p")
-  (unless (ignore-errors
-            (backward-up-list arg)
-            t)
-    (if (nth 3 (syntax-ppss)) ;; in string
-        (skip-syntax-backward "^\"")
-      (skip-syntax-backward "^("))
-    (backward-char 1)))
+  (if (nth 3 (syntax-ppss))
+      (progn
+        (skip-syntax-backward "^\"|")
+        (backward-char 1))
+    (unless (ignore-errors
+              (backward-up-list arg)
+              t)
+      (skip-syntax-backward "^(")
+      (backward-char 1))))
 
 ;;;###autoload
 (defun editutil-forward-list (arg)
