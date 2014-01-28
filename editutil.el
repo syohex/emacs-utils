@@ -411,6 +411,15 @@
       (backward-char 1))))
 
 ;;;###autoload
+(defun editutil-down-list (arg)
+  (interactive "p")
+  (unless (ignore-errors
+            (down-list arg)
+            t)
+    (skip-syntax-forward "^(")
+    (forward-char 2)))
+
+;;;###autoload
 (defun editutil-forward-list (arg)
   (interactive "p")
   (unless (ignore-errors
@@ -442,6 +451,7 @@
   (global-set-key (kbd "C-M-r") 'editutil-backward-char)
   (global-set-key (kbd "C-M-u") 'editutil-backward-up)
   (global-set-key (kbd "C-M-n") 'editutil-forward-list)
+  (global-set-key (kbd "C-M-d") 'editutil-down-list)
   (global-set-key (kbd "M-o") 'editutil-edit-next-line)
   (global-set-key (kbd "M-O") 'editutil-edit-previous-line)
   (global-set-key (kbd "M-s") 'editutil-unwrap-at-point)
