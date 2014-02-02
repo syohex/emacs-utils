@@ -447,8 +447,8 @@
 
   (global-set-key [(control shift up)] 'editutil-move-line-up)
   (global-set-key [(control shift down)] 'editutil-move-line-down)
-  (global-set-key (kbd "C-M-s") 'editutil-forward-char)
-  (global-set-key (kbd "C-M-r") 'editutil-backward-char)
+  (global-set-key (kbd "M-e") 'editutil-forward-char)
+  (global-set-key (kbd "M-a") 'editutil-backward-char)
   (global-set-key (kbd "C-M-u") 'editutil-backward-up)
   (global-set-key (kbd "C-M-n") 'editutil-forward-list)
   (global-set-key (kbd "C-M-d") 'editutil-down-list)
