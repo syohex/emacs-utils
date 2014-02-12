@@ -420,6 +420,16 @@
       (backward-char 1))))
 
 ;;;###autoload
+(defun editutil-escape-parentheses ()
+  (interactive)
+  (if (nth 3 (syntax-ppss))
+      (progn
+        (skip-syntax-forward "^\"|")
+        (forward-char 2))
+    (backward-up-list 1)
+    (forward-sexp 1)))
+
+;;;###autoload
 (defun editutil-down-list (arg)
   (interactive "p")
   (unless (ignore-errors
@@ -458,6 +468,7 @@
   (global-set-key [(control shift down)] 'editutil-move-line-down)
 
   (global-set-key (kbd "C-M-u") 'editutil-backward-up)
+  (global-set-key (kbd "C-M-r") 'editutil-escape-parentheses)
   (global-set-key (kbd "C-M-n") 'editutil-forward-list)
   (global-set-key (kbd "C-M-d") 'editutil-down-list)
   (global-set-key (kbd "M-o") 'editutil-edit-next-line)
