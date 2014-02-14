@@ -47,7 +47,7 @@
     (save-excursion
       (forward-char 1)
       (while (re-search-forward (regexp-quote pair) limit t)
-        (incf count)))
+        (cl-incf count)))
     (save-excursion
       (let ((search-count (+ arg count))
             (re (regexp-quote matched)))
@@ -75,7 +75,7 @@
             (save-excursion
               (forward-char 1)
               (while (re-search-forward (regexp-quote matched) curpoint t)
-                (incf count)))
+                (cl-incf count)))
             (goto-char start)
             (forward-char 1)
             (when (re-search-forward (regexp-quote pair) nil t (1+ count))
