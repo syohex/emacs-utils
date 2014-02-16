@@ -184,7 +184,7 @@
   (unless char
     (if (editutil--last-command-move-char-p)
         (setq char editutil--last-search-char)
-      (setq char (read-char "Forward Char: "))))
+      (setq char (read-event))))
   (unless (char-or-string-p char)
     (error "Error: Input Invalid Char %d" char))
   (setq editutil--last-search-char char)
@@ -201,7 +201,7 @@
   (unless char
     (if (editutil--last-command-move-char-p)
         (setq char editutil--last-search-char)
-      (setq char (read-char "Backward Char: "))))
+      (setq char (read-event))))
   (backward-char 1)
   (editutil-forward-char (- arg) char))
 
@@ -467,6 +467,8 @@
   (global-set-key [(control shift up)] 'editutil-move-line-up)
   (global-set-key [(control shift down)] 'editutil-move-line-down)
 
+  (global-set-key (kbd "M-e") 'editutil-forward-char)
+  (global-set-key (kbd "M-a") 'editutil-backward-char)
   (global-set-key (kbd "C-M-u") 'editutil-backward-up)
   (global-set-key (kbd "C-M-r") 'editutil-escape-parentheses)
   (global-set-key (kbd "C-M-n") 'editutil-forward-list)
