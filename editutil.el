@@ -425,7 +425,7 @@
   (if (nth 3 (syntax-ppss))
       (progn
         (skip-syntax-forward "^\"|")
-        (forward-char 2))
+        (forward-char 1))
     (backward-up-list 1)
     (forward-sexp 1)))
 
