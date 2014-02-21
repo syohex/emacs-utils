@@ -403,8 +403,8 @@
 (defun editutil-isearch-exit ()
   (interactive)
   (isearch-exit)
-  (when isearch-forward
-    (backward-char (length isearch-string))))
+  (when (and isearch-forward isearch-success)
+    (goto-char (match-beginning 0))))
 
 ;;;###autoload
 (defun editutil-backward-up (arg)
