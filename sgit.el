@@ -42,11 +42,13 @@
       (let ((ret (call-process-shell-command cmd nil t)))
         (unless (zerop ret)
           (error (format "Failed '%s'" cmd)))
-        (goto-char (point-min))
-        (when mode-func
-          (funcall mode-func))
-        (setq buffer-read-only t)
-        (pop-to-buffer buf)))))
+        (if (string= (buffer-string) "")
+            (message "No Changes")
+          (goto-char (point-min))
+          (when mode-func
+            (funcall mode-func))
+          (setq buffer-read-only t)
+          (pop-to-buffer buf))))))
 
 (defun sgit:top-directory ()
   (with-temp-buffer
