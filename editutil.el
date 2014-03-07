@@ -461,12 +461,20 @@
   (insert-parentheses (or arg 1)))
 
 ;;;###autoload
+(defun editutil-other-window ()
+  (interactive)
+  (when (one-window-p)
+    (split-window-right))
+  (other-window 1))
+
+;;;###autoload
 (defun editutil-default-setup ()
   (interactive)
 
   (global-set-key [(control shift up)] 'editutil-move-line-up)
   (global-set-key [(control shift down)] 'editutil-move-line-down)
 
+  (global-set-key (kbd "C-M-o") 'editutil-other-window)
   (global-set-key (kbd "M-q") 'editutil-forward-char)
   (global-set-key (kbd "M-Q") 'editutil-backward-char)
   (global-set-key (kbd "C-M-u") 'editutil-backward-up)
