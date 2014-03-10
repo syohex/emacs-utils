@@ -23,13 +23,16 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'thingatpt)
 
 (declare-function copy-sexp "thingopt")
 (declare-function smartrep-define-key "smartrep")
 (declare-function subword-forward "subword")
 (declare-function subword-backward "subword")
 
-(require 'thingatpt)
+(defgroup editutil nil
+  "My own editing utilities"
+  :group 'editing)
 
 (defvar editutil--unwrap-pair
   '(("(" . ")") ("[" . "]") ("{" . "}") ("'" . "'") ("\"" . "\"")
@@ -466,6 +469,39 @@
   (when (one-window-p)
     (split-window-right))
   (other-window 1))
+
+(defface editutils-highlight
+  '((((class color) (background light))
+     :background "yellow")
+    (((class color) (background dark))
+     :background "yellow" :foreground "black"))
+  "highlight symbol"
+  :group 'editutil)
+
+;;;###autoload
+(defun editutil-highlight-clear-overlays ()
+  (interactive)
+  (dolist (ov (overlays-in (point-min) (point-max)))
+    (when (overlay-get ov 'editutils-highlight)
+      (delete-overlay ov))))
+
+;;;###autoload
+(defun editutil-highlight-symbol-in-defun ()
+  (interactive)
+  (let* ((symbol (thing-at-point 'symbol))
+         (bounds (bounds-of-thing-at-point 'defun))
+         (begin (car bounds))
+         (end (cdr bounds)))
+    (unless symbol
+      (error "Here is not on symbol!!"))
+    (editutil-highlight-clear-overlays)
+    (save-excursion
+      (goto-char begin)
+      (let ((regexp (concat "\\_<" symbol "\\_>")))
+        (while (re-search-forward regexp end t)
+          (let ((ov (make-overlay (match-beginning 0) (match-end 0))))
+            (overlay-put ov 'face 'editutils-highlight)
+            (overlay-put ov 'editutils-highlight t)))))))
 
 ;;;###autoload
 (defun editutil-default-setup ()
