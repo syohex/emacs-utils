@@ -94,6 +94,21 @@
             (insert replaced)))))))
 
 ;;;###autoload
+(defun editutil-mark-around-paired (char)
+  (interactive
+   (list (read-char)))
+  (let* ((curpoint (point))
+         (open-str (char-to-string char))
+         (close-str (editutil--unwrap-counterpart open-str))
+         start)
+    (unless (re-search-backward open-str nil t)
+      (error "Can't find '%s'" open-str))
+    (set-mark (point))
+    (goto-char curpoint)
+    (unless (re-search-forward close-str nil t)
+      (error "Can't find '%s'" close-str))))
+
+;;;###autoload
 (defun editutil-replace-wrapped-string (arg)
   (interactive "p")
   (let ((replaced (char-to-string (read-char))))
@@ -532,6 +547,14 @@
   (global-set-key (kbd "C-M-SPC") 'editutil-copy-sexp)
   (global-set-key (kbd "M-I") 'editutil-indent-same-as-previous-line)
   (global-set-key (kbd "M-(") 'editutil-insert-parentheses)
+
+  ;; C-q map
+  (define-key my/ctrl-q-map (kbd "l") 'editutil-copy-line)
+  (define-key my/ctrl-q-map (kbd ".") 'editutil-highlight-symbol-in-defun)
+  (define-key my/ctrl-q-map (kbd "?") 'editutil-highlight-clear-overlays)
+  (define-key my/ctrl-q-map (kbd "s") 'editutil-unwrap-at-point)
+  (define-key my/ctrl-q-map (kbd "r") 'editutil-replace-wrapped-string)
+  (define-key my/ctrl-q-map (kbd "a") 'editutil-mark-around-paired)
 
   (define-key isearch-mode-map [remap isearch-exit] 'editutil-isearch-exit)
 
