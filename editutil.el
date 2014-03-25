@@ -104,7 +104,7 @@
         (while (nth 3 (syntax-ppss))
           (skip-syntax-backward "^\"|")
           (backward-char 1))
-      (unless (re-search-backward open-str nil t)
+      (unless (re-search-backward (regexp-quote open-str) nil t)
         (error "Can't find '%s'" open-str)))
     (set-mark (point))
     (forward-sexp 1)))
