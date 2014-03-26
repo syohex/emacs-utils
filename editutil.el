@@ -97,7 +97,9 @@
 (defun editutil-mark-around-paired (char)
   (interactive
    (list (read-char)))
-  (let* ((curpoint (point))
+  (let* ((inner-p current-prefix-arg)
+         (current-prefix-arg nil)
+         (curpoint (point))
          (open-str (char-to-string char))
          (close-str (editutil--unwrap-counterpart open-str)))
     (if (memq char '(?' ?\"))
@@ -106,8 +108,11 @@
           (backward-char 1))
       (unless (re-search-backward (regexp-quote open-str) nil t)
         (error "Can't find '%s'" open-str)))
-    (set-mark (point))
-    (forward-sexp 1)))
+    (if inner-p
+        (set-mark (1+ (point)))
+      (set-mark (point)))
+    (forward-sexp 1)
+    (and inner-p (backward-char 1))))
 
 ;;;###autoload
 (defun editutil-replace-wrapped-string (arg)
