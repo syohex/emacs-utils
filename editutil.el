@@ -525,6 +525,22 @@
             (overlay-put ov 'editutils-highlight t)))))))
 
 ;;;###autoload
+(defun editutil-move-left-hand-side ()
+  (interactive)
+  (let ((bound (line-beginning-position)))
+    (if (not (re-search-backward "\\s-+:?=\\s-+" bound t))
+        (message "Here is left hand side.")
+      (goto-char (match-beginning 0)))))
+
+;;;###autoload
+(defun editutil-move-right-hand-side ()
+  (interactive)
+  (let ((bound (line-end-position)))
+    (if (not (re-search-forward "\\s-+:?=\\s-+" bound t))
+        (message "Here is righht hand side.")
+      (goto-char (match-end 0)))))
+
+;;;###autoload
 (defun editutil-default-setup ()
   (interactive)
 
@@ -561,6 +577,8 @@
   (define-key my/ctrl-q-map (kbd "s") 'editutil-unwrap-at-point)
   (define-key my/ctrl-q-map (kbd "r") 'editutil-replace-wrapped-string)
 
+  (define-key my/ctrl-q-map (kbd "h") 'editutil-move-left-hand-side)
+  (define-key my/ctrl-q-map (kbd "l") 'editutil-move-right-hand-side)
   (define-key isearch-mode-map [remap isearch-exit] 'editutil-isearch-exit)
 
   (define-key minibuffer-local-map (kbd "C-M-u") 'editutil-minibuffer-up-dir)
