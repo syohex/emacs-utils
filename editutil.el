@@ -93,12 +93,9 @@
           (when replaced
             (insert replaced)))))))
 
-;;;###autoload
-(defun editutil-mark-around-paired (char)
-  (interactive
-   (list (read-char)))
-  (let* ((inner-p current-prefix-arg)
-         (current-prefix-arg nil)
+(defun editutil--mark-paired (char inner-p)
+  (interactive)
+  (let* ((current-prefix-arg nil)
          (curpoint (point))
          (open-str (char-to-string char))
          (close-str (editutil--unwrap-counterpart open-str)))
@@ -113,6 +110,18 @@
       (set-mark (point)))
     (forward-sexp 1)
     (and inner-p (backward-char 1))))
+
+;;;###autoload
+(defun editutil-mark-inside-paired (char)
+  (interactive
+   (list (read-char)))
+  (editutil--mark-paired char t))
+
+;;;###autoload
+(defun editutil-mark-around-paired (char)
+  (interactive
+   (list (read-char)))
+  (editutil--mark-paired char nil))
 
 ;;;###autoload
 (defun editutil-replace-wrapped-string (arg)
@@ -552,7 +561,10 @@
   (global-set-key (kbd "M-q") 'editutil-forward-char)
   (global-set-key (kbd "M-Q") 'editutil-backward-char)
   (global-set-key (kbd "C-M-u") 'editutil-backward-up)
+
   (global-set-key (kbd "C-M-r") 'editutil-mark-around-paired)
+  (global-set-key (kbd "C-M-c") 'editutil-mark-inside-paired)
+
   (global-set-key (kbd "C-M-n") 'editutil-forward-list)
   (global-set-key (kbd "C-M-d") 'editutil-down-list)
   (global-set-key (kbd "M-o") 'editutil-edit-next-line)
