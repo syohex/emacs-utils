@@ -98,7 +98,7 @@
   (let* ((current-prefix-arg nil)
          (curpoint (point))
          (open-str (char-to-string char))
-         (close-str (editutil--unwrap-counterpart open-str)))
+         (close-str (ignore-errors (editutil--unwrap-counterpart open-str))))
     (if (memq char '(?' ?\"))
         (while (nth 3 (syntax-ppss))
           (skip-syntax-backward "^\"|")
@@ -108,7 +108,10 @@
     (if inner-p
         (set-mark (1+ (point)))
       (set-mark (point)))
-    (forward-sexp 1)
+    (if close-str
+        (forward-sexp 1)
+      (forward-char 1)
+      (re-search-forward (regexp-quote open-str) nil t))
     (and inner-p (backward-char 1))))
 
 ;;;###autoload
