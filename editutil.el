@@ -440,7 +440,7 @@
   (interactive)
   (isearch-exit)
   (when (and isearch-forward isearch-success)
-    (goto-char (match-beginning 0))))
+    (backward-char (length isearch-string))))
 
 ;;;###autoload
 (defun editutil-backward-up (arg)
