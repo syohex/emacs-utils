@@ -589,7 +589,7 @@
   ;; C-q map
   (define-key my/ctrl-q-map (kbd "l") 'editutil-copy-line)
   (define-key my/ctrl-q-map (kbd ".") 'editutil-highlight-symbol-in-defun)
-  (define-key my/ctrl-q-map (kbd "?") 'editutil-highlight-clear-overlays)
+  (define-key my/ctrl-q-map (kbd ",") 'editutil-highlight-clear-overlays)
   (define-key my/ctrl-q-map (kbd "s") 'editutil-unwrap-at-point)
   (define-key my/ctrl-q-map (kbd "r") 'editutil-replace-wrapped-string)
 
