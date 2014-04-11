@@ -553,6 +553,13 @@
       (goto-char (match-end 0)))))
 
 ;;;###autoload
+(defun editutil-show-here-function ()
+  (interactive)
+  (if (not which-func-mode)
+      (message "`which-func-mode' is not enabled")
+    (message "%s" (gethash (selected-window) which-func-table))))
+
+;;;###autoload
 (defun editutil-default-setup ()
   (interactive)
 
@@ -595,6 +602,8 @@
 
   (define-key my/ctrl-q-map (kbd "h") 'editutil-move-left-hand-side)
   (define-key my/ctrl-q-map (kbd "l") 'editutil-move-right-hand-side)
+  (define-key my/ctrl-q-map (kbd "?") 'editutil-show-here-function)
+
   (define-key isearch-mode-map [remap isearch-exit] 'editutil-isearch-exit)
 
   (define-key minibuffer-local-map (kbd "C-M-u") 'editutil-minibuffer-up-dir)
