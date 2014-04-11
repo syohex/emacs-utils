@@ -22,8 +22,12 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (defvar my/ctrl-q-map))
+
 (require 'cl-lib)
 (require 'thingatpt)
+(require 'which-func)
 
 (declare-function copy-sexp "thingopt")
 (declare-function smartrep-define-key "smartrep")
