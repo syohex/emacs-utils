@@ -24,6 +24,10 @@
 (require 'cl-lib)
 (require 'diff)
 
+(declare-function helm "helm")
+(declare-function helm-candidate-buffer "helm")
+(declare-function helm-attrset "helm")
+
 (defgroup sgit nil
   "Simple git utils"
   :prefix "sgit:"
@@ -64,9 +68,6 @@
 
 (defun sgit:prompt (git-cmd &optional option)
   (read-string "> " (format "git %s %s " git-cmd (or option ""))))
-
-(defun sgit:file-name (file)
-  (file-relative-name file (sgit:top-directory)))
 
 (defun sgit:file-name ()
   (cl-case major-mode
