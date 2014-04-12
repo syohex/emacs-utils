@@ -22,6 +22,7 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'diff)
 
 (defgroup sgit nil
@@ -66,10 +67,15 @@
 (defun sgit:file-name (file)
   (file-relative-name file (sgit:top-directory)))
 
+(defun sgit:file-name ()
+  (cl-case major-mode
+    (dired-mode (dired-get-filename nil t))
+    (otherwise (buffer-file-name))))
+
 (defun sgit:git-cmd (subcmd &optional mode-func)
   (let ((cmd (format "git %s %s"
                      subcmd
-                     (expand-file-name (buffer-file-name)))))
+                     (expand-file-name (sgit:file-name)))))
     (sgit:exec cmd mode-func)))
 
 ;;;###autoload
