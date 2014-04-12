@@ -38,7 +38,7 @@
     (kill-buffer (get-buffer sgit:buffer)))
   (let ((buf (get-buffer-create sgit:buffer)))
     (with-current-buffer buf
-      (setq buffer-read-only nil)
+      (read-only-mode +1)
       (erase-buffer)
       (let ((ret (call-process-shell-command cmd nil t)))
         (unless (zerop ret)
@@ -48,7 +48,7 @@
           (goto-char (point-min))
           (when mode-func
             (funcall mode-func))
-          (setq buffer-read-only t)
+          (read-only-mode -1)
           (pop-to-buffer buf))))))
 
 (defun sgit:top-directory ()
