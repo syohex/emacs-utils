@@ -1,9 +1,8 @@
-;;; sgit.el --- My own git utilities
+;;; sgit.el --- My own git utilities -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2014 by Syohei YOSHIDA
 
 ;; Author: Syohei YOSHIDA <syohex@gmail.com>
-;; Version: 0.01
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -40,16 +39,18 @@
     (with-current-buffer buf
       (read-only-mode +1)
       (erase-buffer)
-      (let ((ret (call-process-shell-command cmd nil t)))
-        (unless (zerop ret)
-          (error (format "Failed '%s'" cmd)))
-        (if (string= (buffer-string) "")
-            (message "No Changes")
-          (goto-char (point-min))
-          (when mode-func
-            (funcall mode-func))
-          (read-only-mode -1)
-          (pop-to-buffer buf))))))
+      (set-process-sentinel
+       (start-process-shell-command "sgit" buf cmd)
+       (lambda (proc _event)
+         (when (eq (process-status proc) 'exit)
+           (with-current-buffer (process-buffer proc)
+             (if (string= (buffer-string) "")
+                 (message "No Changes")
+               (goto-char (point-min))
+               (when mode-func
+                 (funcall mode-func))
+               (read-only-mode -1)
+               (pop-to-buffer (current-buffer))))))))))
 
 (defun sgit:top-directory ()
   (with-temp-buffer
@@ -73,7 +74,7 @@
     (otherwise (buffer-file-name))))
 
 (defun sgit:git-cmd (subcmd &optional mode-func)
-  (let ((cmd (format "git %s %s"
+  (let ((cmd (format "git --no-pager %s %s"
                      subcmd
                      (expand-file-name (sgit:file-name)))))
     (sgit:exec cmd mode-func)))
