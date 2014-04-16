@@ -23,7 +23,8 @@
 ;;; Code:
 
 (eval-when-compile
-  (defvar my/ctrl-q-map))
+  (defvar my/ctrl-q-map)
+  (defvar paredit-mode-map))
 
 (require 'cl-lib)
 (require 'thingatpt)
@@ -564,6 +565,19 @@
     (message "%s" (gethash (selected-window) which-func-table))))
 
 ;;;###autoload
+(defun editutil-toggle-let ()
+  (interactive)
+  (save-excursion
+    (let ((limit (save-excursion (beginning-of-defun) (point))))
+      (when (re-search-backward "(\\(let\\)\\(\\*\\)?" limit t)
+        (goto-char (match-end 1))
+        (if (match-string 2)
+            (delete-char 1)
+          (insert "*"))
+        (backward-up-list)
+        (indent-pp-sexp)))))
+
+;;;###autoload
 (defun editutil-default-setup ()
   (interactive)
 
@@ -611,6 +625,8 @@
   (define-key isearch-mode-map [remap isearch-exit] 'editutil-isearch-exit)
 
   (define-key minibuffer-local-map (kbd "C-M-u") 'editutil-minibuffer-up-dir)
+
+  (define-key paredit-mode-map (kbd "C-c C-l") 'editutil-toggle-let)
 
   (smartrep-define-key
       global-map "C-x" '(("j" . 'editutil-insert-newline-without-moving)))
