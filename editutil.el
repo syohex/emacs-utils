@@ -23,8 +23,7 @@
 ;;; Code:
 
 (eval-when-compile
-  (defvar my/ctrl-q-map)
-  (defvar paredit-mode-map))
+  (defvar my/ctrl-q-map))
 
 (require 'cl-lib)
 (require 'thingatpt)
@@ -441,11 +440,18 @@
       (kill-ring-save start (line-end-position)))))
 
 ;;;###autoload
-(defun editutil-isearch-exit ()
+(defun editutil-isearch-match-begin ()
   (interactive)
   (isearch-exit)
   (when (and isearch-forward isearch-success)
     (backward-char (length isearch-string))))
+
+;;;###autoload
+(defun editutil-isearch-match-end ()
+  (interactive)
+  (isearch-exit)
+  (when (and (not isearch-forward) isearch-success)
+    (forward-char (1- (length isearch-string)))))
 
 ;;;###autoload
 (defun editutil-backward-up (arg)
@@ -622,11 +628,11 @@
   (define-key my/ctrl-q-map (kbd "l") 'editutil-move-right-hand-side)
   (define-key my/ctrl-q-map (kbd "?") 'editutil-show-here-function)
 
-  (define-key isearch-mode-map [remap isearch-exit] 'editutil-isearch-exit)
+  (define-key isearch-mode-map [remap isearch-exit] 'editutil-isearch-match-begin)
+  (define-key isearch-mode-map (kbd "C-a") 'editutil-isearch-match-begin)
+  (define-key isearch-mode-map (kbd "C-e") 'editutil-isearch-match-end)
 
   (define-key minibuffer-local-map (kbd "C-M-u") 'editutil-minibuffer-up-dir)
-
-  (define-key paredit-mode-map (kbd "C-c C-l") 'editutil-toggle-let)
 
   (smartrep-define-key
       global-map "C-x" '(("j" . 'editutil-insert-newline-without-moving)))
