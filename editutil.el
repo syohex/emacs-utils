@@ -192,6 +192,13 @@
                    (point))))
 
 ;;;###autoload
+(defun editutil-zap-to-char-backward ()
+  (interactive)
+  (let ((arg (prefix-numeric-value current-prefix-arg))
+        (char (read-char "Zap to char: " t)))
+    (zap-to-char (- arg) char)))
+
+;;;###autoload
 (defun editutil-next-symbol (arg)
   (interactive "p")
   (let ((symbol (thing-at-point 'symbol))
