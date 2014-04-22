@@ -625,7 +625,7 @@
   (global-set-key (kbd "M-(") 'editutil-insert-parentheses)
 
   ;; C-q map
-  (define-key my/ctrl-q-map (kbd "l") 'editutil-copy-line)
+  (define-key my/ctrl-q-map (kbd "C-l") 'editutil-copy-line)
   (define-key my/ctrl-q-map (kbd ".") 'editutil-highlight-symbol-in-defun)
   (define-key my/ctrl-q-map (kbd ",") 'editutil-highlight-clear-overlays)
   (define-key my/ctrl-q-map (kbd "s") 'editutil-unwrap-at-point)
