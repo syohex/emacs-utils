@@ -3,7 +3,7 @@
 
 ## pomodoro.el
 
-(Pomodoro Technique)[http://www.pomodorotechnique.com/] in Emacs.
+[Pomodoro Technique](http://www.pomodorotechnique.com/) in Emacs.
 This is my own implementation.
 
 ### Customize
@@ -54,8 +54,8 @@ long rest.
 
 ### Related Projects
 
-* (https://github.com/konr/tomatinho)[https://github.com/konr/tomatinho]
-* (http://ivan.kanis.fr/pomodoro.el)[http://ivan.kanis.fr/pomodoro.el]
+* [https://github.com/konr/tomatinho](https://github.com/konr/tomatinho)
+* [http://ivan.kanis.fr/pomodoro.el](http://ivan.kanis.fr/pomodoro.el)
 
 
 ## sgit.el
