@@ -41,7 +41,8 @@
     (kill-buffer (get-buffer sgit:buffer)))
   (let ((buf (get-buffer-create sgit:buffer)))
     (with-current-buffer buf
-      (read-only-mode +1)
+      (read-only-mode -1)
+      (view-mode -1)
       (erase-buffer)
       (set-process-sentinel
        (start-process-shell-command "sgit" buf cmd)
@@ -53,7 +54,8 @@
                (goto-char (point-min))
                (when mode-func
                  (funcall mode-func))
-               (read-only-mode -1)
+               (view-mode +1)
+               (read-only-mode +1)
                (pop-to-buffer (current-buffer))))))))))
 
 (defun sgit:top-directory ()
