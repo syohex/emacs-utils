@@ -636,8 +636,8 @@
   (define-key my/ctrl-q-map (kbd "?") 'editutil-show-here-function)
 
   (define-key isearch-mode-map [remap isearch-exit] 'editutil-isearch-match-begin)
-  (define-key isearch-mode-map (kbd "C-a") 'editutil-isearch-match-begin)
-  (define-key isearch-mode-map (kbd "C-e") 'editutil-isearch-match-end)
+  (define-key isearch-mode-map (kbd "M-a") 'editutil-isearch-match-begin)
+  (define-key isearch-mode-map (kbd "M-e") 'editutil-isearch-match-end)
 
   (define-key minibuffer-local-map (kbd "C-M-u") 'editutil-minibuffer-up-dir)
 
