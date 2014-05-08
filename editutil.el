@@ -599,8 +599,6 @@
 
   (global-set-key (kbd "C-M-o") 'editutil-other-window)
   (global-set-key (kbd "C-M-l") 'editutil-escape-parentheses)
-  (global-set-key (kbd "M-q") 'editutil-forward-char)
-  (global-set-key (kbd "M-Q") 'editutil-backward-char)
   (global-set-key (kbd "C-M-u") 'editutil-backward-up)
 
   (global-set-key (kbd "C-M-r") 'editutil-mark-around-paired)
