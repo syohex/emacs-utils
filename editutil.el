@@ -594,6 +594,11 @@
         (indent-pp-sexp)))))
 
 ;;;###autoload
+(defun editutil-copy-from-clipboard ()
+  (interactive)
+  (insert (x-get-clipboard)))
+
+;;;###autoload
 (defun editutil-default-setup ()
   (interactive)
 
@@ -635,6 +640,10 @@
   (define-key my/ctrl-q-map (kbd "h") 'editutil-move-left-hand-side)
   (define-key my/ctrl-q-map (kbd "l") 'editutil-move-right-hand-side)
   (define-key my/ctrl-q-map (kbd "?") 'editutil-show-here-function)
+
+  (when window-system
+    ;; This command should be used from `emacsclient -t'
+    (define-key my/ctrl-q-map (kbd "y") 'editutil-copy-from-clipboard))
 
   (define-key isearch-mode-map [remap isearch-exit] 'editutil-isearch-match-begin)
   (define-key isearch-mode-map (kbd "M-a") 'editutil-isearch-match-begin)
