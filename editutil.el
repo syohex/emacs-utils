@@ -195,8 +195,11 @@
 (defun editutil-zap-to-char-backward ()
   (interactive)
   (let ((arg (prefix-numeric-value current-prefix-arg))
-        (char (read-char "Zap to char: " t)))
-    (zap-to-char (- arg) char)))
+        (char (read-char "Zap to char: " t))
+        (curpoint (point)))
+    (save-excursion
+      (when (search-backward (char-to-string char) nil t)
+        (delete-region (1+ (point)) curpoint)))))
 
 ;;;###autoload
 (defun editutil-next-symbol (arg)
