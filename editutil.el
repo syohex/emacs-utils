@@ -599,6 +599,17 @@
   (insert (x-get-clipboard)))
 
 ;;;###autoload
+(defun editutil-git-intent-to-add ()
+  (interactive)
+  (save-buffer)
+  (let* ((file (file-name-nondirectory (buffer-file-name)))
+         (cmd (format "git add -N %s" file)))
+    (unless (zerop (call-process-shell-command cmd))
+      (error "Failed: %s" cmd))
+    (message "Success: %s" cmd))
+  (git-gutter))
+
+;;;###autoload
 (defun editutil-default-setup ()
   (interactive)
 
@@ -629,6 +640,8 @@
   (global-set-key (kbd "C-M-SPC") 'editutil-copy-sexp)
   (global-set-key (kbd "M-I") 'editutil-indent-same-as-previous-line)
   (global-set-key (kbd "M-(") 'editutil-insert-parentheses)
+
+  (global-set-key (kbd "C-x v N") 'editutil-git-intent-to-add)
 
   ;; C-q map
   (define-key my/ctrl-q-map (kbd "C-l") 'editutil-copy-line)
