@@ -46,17 +46,16 @@
 (defun hotentry:rss-url (key threshold)
   (format "http://b.hatena.ne.jp/search/tag?q=%s&users=%d&mode=rss" key threshold))
 
-(defun hotentry:get-command (url)
-  (cond ((executable-find "curl") (format "curl -s '%s'" url))
-        ((executable-find "wget") (format "wget -O - '%s'" url))
+(defun hotentry:download-command (url)
+  (cond ((executable-find "curl") (cl-values "curl" (list "-s" url)))
+        ((executable-find "wget") (cl-values "wget" (list "-O" "-" url)))
         (t (error "Please install curl or wget"))))
 
 (defun hotentry:parse-rss (url)
   (with-temp-buffer
-    (let* ((cmd (hotentry:get-command url))
-           (ret (call-process-shell-command cmd nil '(t nil) nil)))
-      (unless (zerop ret)
-        (error (format "Download failed: %s" url)))
+    (cl-multiple-value-bind (cmd args) (hotentry:download-command url)
+      (unless (zerop (apply 'call-process cmd nil t '(t nil) args))
+        (error "Download failed: %s" url))
       (hotentry:collect-items (libxml-parse-xml-region (point-min) (point-max))))))
 
 (defun hotentry:collect-items (xml-tree)
