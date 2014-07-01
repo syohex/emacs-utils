@@ -60,13 +60,11 @@
 
 (defun sgit:top-directory ()
   (with-temp-buffer
-    (let* ((cmd "git rev-parse --show-toplevel")
-           (ret (call-process-shell-command cmd nil t)))
-      (unless (zerop ret)
-        (error (format "Failed '%s'" cmd)))
-      (goto-char (point-min))
-      (file-name-as-directory
-       (buffer-substring-no-properties (point) (line-end-position))))))
+    (unless (zerop (call-process "git" nil t nil "rev-parse" "--show-toplevel"))
+      (error "Failed: 'git rev-parse --show-toplevel'"))
+    (goto-char (point-min))
+    (file-name-as-directory
+     (buffer-substring-no-properties (point) (line-end-position)))))
 
 (defun sgit:prompt (git-cmd &optional option)
   (read-string "> " (format "git %s %s " git-cmd (or option ""))))
@@ -107,9 +105,10 @@
 
 (defun sgit:grep-init ()
   (let ((cmd (read-string "> "
-                          (substring-no-properties
-                           (format "git grep -n %s"
-                                   (or (thing-at-point 'symbol) "")))
+                          (concat "git grep -n "
+                                  (substring-no-properties
+                                   (or (thing-at-point 'symbol)
+                                       "")))
                           'sgit:grep-history)))
     (helm-attrset 'recenter t)
     (with-current-buffer (helm-candidate-buffer 'global)
