@@ -1,9 +1,10 @@
-;;; hotentry.el --- Simple hotentry viewer
+;;; hotentry.el --- Simple hotentry viewer -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2012 by Syohei YOSHIDA
+;; Copyright (C) 2014 by Syohei YOSHIDA
 
 ;; Author: Syohei YOSHIDA <syohex@gmail.com>
-;; URL:
+;; URL: https://github.com/syohex/emacs-utils
+;; Package-Requires: ((cl-lib "0.5"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -22,9 +23,7 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'cl))
-
+(require 'cl-lib)
 (require 'xml)
 (require 'button)
 
@@ -61,12 +60,11 @@
       (hotentry:collect-items (libxml-parse-xml-region (point-min) (point-max))))))
 
 (defun hotentry:collect-items (xml-tree)
-  (loop for elm in (cdr xml-tree)
-        when (eq (car elm) 'item)
-        collect
-        (let ((item-value (cdr elm)))
-          (loop for tag in '(title link description bookmarkcount)
-                append (list tag (cadr (assoc-default tag item-value)))))))
+  (cl-loop for (tag . item) in (cdr xml-tree)
+           when (eq tag 'item)
+           collect
+           (cl-loop for tag in '(title link description bookmarkcount)
+                    append (list tag (cadr (assoc-default tag item))))))
 
 (defun hotentry:short-description (desc limit)
   (cond ((<= (length desc) limit) desc)
@@ -78,23 +76,23 @@
       (setq buffer-read-only nil)
       (erase-buffer)
       (insert (concat title "\n"))
-      (loop for item in items
-            for index = 1 then (+ index 1)
-            for label = (plist-get item 'title)
-            for link  = (plist-get item 'link)
-            for desc  = (purecopy (hotentry:short-description
-                                   (plist-get item 'description) 40))
-            for count = (plist-get item 'bookmarkcount)
-            do
-            (progn
-              (insert (format "%2d: [%4s] " index count))
-              (insert-button label
-                             'face 'hotentry:entry-face
-                             'link link 'help-echo desc
-                             'action (lambda (b)
-                                       (let ((props (overlay-properties b)))
-                                         (browse-url (plist-get props 'link)))))
-              (insert "\n")))
+      (cl-loop for item in items
+               for index = 1 then (+ index 1)
+               for label = (plist-get item 'title)
+               for link  = (plist-get item 'link)
+               for desc  = (purecopy (hotentry:short-description
+                                      (plist-get item 'description) 40))
+               for count = (plist-get item 'bookmarkcount)
+               do
+               (progn
+                 (insert (format "%2d: [%4s] " index count))
+                 (insert-button label
+                                'face 'hotentry:entry-face
+                                'link link 'help-echo desc
+                                'action (lambda (b)
+                                          (let ((props (overlay-properties b)))
+                                            (browse-url (plist-get props 'link)))))
+                 (insert "\n")))
       (setq truncate-lines t)
       (setq buffer-read-only t)
       (goto-char (point-min))
