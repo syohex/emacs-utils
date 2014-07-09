@@ -33,7 +33,7 @@
   :prefix "sgit:"
   :group 'vc)
 
-(defvar sgit:buffer "*sgit*"
+(defvar sgit:buffer " *sgit*"
   "Name of the buffer where is execute command")
 
 (defun sgit:exec (cmd &optional mode-func)
