@@ -21,12 +21,13 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (defvar git-gutter-mode))
+
 (require 'cl-lib)
 (require 'diff)
 
-(declare-function helm "helm")
-(declare-function helm-candidate-buffer "helm")
-(declare-function helm-attrset "helm")
+(declare-function git-gutter "git-gutter")
 
 (defgroup sgit nil
   "Simple git utils"
@@ -57,14 +58,6 @@
              (view-mode +1)
              (read-only-mode +1)
              (pop-to-buffer (current-buffer)))))))))
-
-(defun sgit:top-directory ()
-  (with-temp-buffer
-    (unless (zerop (call-process "git" nil t nil "rev-parse" "--show-toplevel"))
-      (error "Failed: 'git rev-parse --show-toplevel'"))
-    (goto-char (point-min))
-    (file-name-as-directory
-     (buffer-substring-no-properties (point) (line-end-position)))))
 
 (defun sgit:prompt (git-cmd &optional option)
   (read-string "> " (format "git %s %s " git-cmd (or option ""))))
@@ -101,39 +94,16 @@
                "diff")))
     (sgit:git-cmd cmd 'diff-mode)))
 
-(defvar sgit:grep-history nil)
-
-(defun sgit:grep-init ()
-  (let ((cmd (read-string "> "
-                          (concat "git grep -n "
-                                  (substring-no-properties
-                                   (or (thing-at-point 'symbol)
-                                       "")))
-                          'sgit:grep-history)))
-    (helm-attrset 'recenter t)
-    (with-current-buffer (helm-candidate-buffer 'global)
-      (unless (zerop (call-process-shell-command cmd nil t))
-        (error "Failed: '%s'" cmd))
-      (when (zerop (length (buffer-string)))
-        (error "No output: '%s'" cmd)))))
-
-(defvar sgit-source-grep
-  '((name . "sgit git grep")
-    (init . sgit:grep-init)
-    (candidates-in-buffer)
-    (type . file-line)
-    (candidate-number-limit . 9999)))
-
 ;;;###autoload
-(defun sgit:grep ()
+(defun sgit:intent-to-add ()
   (interactive)
-  (let ((default-directory (sgit:top-directory)))
-    (helm :sources '(sgit-source-grep) :buffer "*sgit-grep*")))
-
-(defface sgit:git-log-commit-header
-  '((t (:foreground "yellow" :weight bold)))
-  "Face of commit header"
-  :group 'sgit)
+  (save-buffer)
+  (let ((file (file-name-nondirectory (buffer-file-name))))
+    (unless (zerop (call-process "git" nil nil nil "add" "-N" file))
+      (error "Failed: 'git add -N %s'" file))
+    (message "Success: Staging %s" file))
+  (when git-gutter-mode
+    (git-gutter)))
 
 (provide 'sgit)
 
