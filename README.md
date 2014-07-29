@@ -58,16 +58,6 @@ long rest.
 * [http://ivan.kanis.fr/pomodoro.el](http://ivan.kanis.fr/pomodoro.el)
 
 
-## sgit.el
-
-My git utilities
-
-
-## helm-myutils.el
-
-My own helm sources and them functions
-
-
 ## emacsclient utilities for Linux Desktop
 * emacs_serverstart.pl
 * emacsclient.sh
@@ -85,3 +75,7 @@ Simple hotentry viewer
 ## editutil.el
 
 [`editutil.el` is moved](https://github.com/syohex/emacs-editutil)
+
+## sgit.el
+
+[`sgit.el` is moved](https://github.com/syohex/emacs-sgit)
